@@ -1,0 +1,24 @@
+@import "./modules/fonts.scss";
+@import "./modules/settings.scss";
+@import "./modules/palate.scss";
+@import "./modules/mixin.scss";
+
+* {
+	margin: 0px;
+	font-family: $fontFamily1;
+	font-size: $fontSizeNormal;
+	box-sizing: border-box;
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+code {
+	font-family: $fontFamily2;
+}
+
+.btn-primary {
+	@include bootstrap-button(dodgerBlue);
+}
