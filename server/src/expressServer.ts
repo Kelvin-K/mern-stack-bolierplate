@@ -1,7 +1,7 @@
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { Express } from "express";
+import express, { Express, Request, Response } from "express";
 import mongoose from "mongoose";
 import path from "path";
 import LoggingMiddleWare from "./middleware/loggingMiddleWare";
@@ -51,7 +51,7 @@ class ExpressServer {
 		this.app.use("/api/health", new HealthCheckRouter().router);
 		this.app.use("/api/user", new UserRouter().router);
 
-		this.app.get("*", (req, res) => res.sendFile(path.resolve('public', 'index.html')));
+		this.app.get("*", (req: Request, res: Response) => res.sendFile(path.resolve('public', 'index.html')));
 	}
 
 	start = async (port: any) => {
