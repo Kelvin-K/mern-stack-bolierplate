@@ -41,7 +41,7 @@ class ExpressServer {
 		this.app.use(bodyParser.text({ type: 'text/html' }));
 
 		// Log requests for auditing purpose
-		this.app.use(LoggingMiddleWare());
+		this.app.use(LoggingMiddleWare);
 
 		// Serve static files
 		this.app.use(express.static('public'));
