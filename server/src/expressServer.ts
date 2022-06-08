@@ -48,23 +48,21 @@ class ExpressServer {
 	}
 
 	configureRoutes = () => {
+		// api
 		this.app.use("/api/health", new HealthCheckRouter().router);
 		this.app.use("/api/user", new UserRouter().router);
 
+		// client
 		this.app.get("*", (req: Request, res: Response) => res.sendFile(path.resolve('public', 'index.html')));
 	}
 
-	start = async (port: any) => {
+	start = async (port: any, databaseUrl: string) => {
 		try {
-			await mongoose.connect(process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/my_database");
-
-			this.app.listen(port, () => {
-				console.log(`Server started listening at http://localhost:${port}/`);
-			});
+			await mongoose.connect(databaseUrl);
+			this.app.listen(port, () => console.log(`Server started listening at http://localhost:${port}/`));
 		}
-		catch
-		{
-			console.log(`Server failed to start.`);
+		catch (error) {
+			console.log(`Server failed to start.\nOriginal Error: ${JSON.stringify(error, null, 2)}`);
 		}
 	}
 }

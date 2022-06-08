@@ -2,4 +2,8 @@ import * as dotenv from "dotenv";
 import ExpressServer from './expressServer';
 
 dotenv.config();
-new ExpressServer().start(process.env.PORT || 9000);
+
+const port = process.env.PORT || 9000;
+const databaseUrl = process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/my_database";
+
+new ExpressServer().start(port, databaseUrl);
