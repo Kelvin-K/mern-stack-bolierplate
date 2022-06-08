@@ -57,6 +57,7 @@ class ExpressServer {
 	start = async (port: any) => {
 		try {
 			await mongoose.connect(process.env.DATABASE_CONNECTION_STRING || "mongodb://127.0.0.1:27017/my_database");
+
 			this.app.listen(port, () => {
 				console.log(`Server started listening at http://localhost:${port}/`);
 			});
