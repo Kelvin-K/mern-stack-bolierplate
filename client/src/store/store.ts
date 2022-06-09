@@ -1,15 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import LoggerMiddleware from './middlewares/loggerMiddleware';
-import { UserReducer } from './reducers/user';
+import LoggerMiddleware from './middleware/loggerMiddleware';
+import { UserReducer } from './reducer/user';
 
 const store = configureStore({
 	reducer: {
 		user: UserReducer
 	},
-	middleware: (getDefaultMiddleware) => [
-		...getDefaultMiddleware(),
+	middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([
 		LoggerMiddleware
-	]
+	])
 });
 
 (window as any).store = store;
