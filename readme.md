@@ -33,6 +33,8 @@ PORT=9000
 DATABASE_CONNECTION_STRING=mongodb://127.0.0.1:27017/my_database
 ```
 
+you can either create `.env` file or add environment variables in your server
+
 ## Production Build
 
 Run below command to get complete build inside `build` directory.
