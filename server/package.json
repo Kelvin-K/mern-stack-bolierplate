@@ -27,8 +27,10 @@
 	"main": "index.js",
 	"name": "server",
 	"scripts": {
-		"build": "ts-node ./src/index.ts",
-		"start": "nodemon"
+		"build": "npx tsc",
+		"postbuild" : "@powershell copy package.json ../dist/package.json && cd ../dist && npm install --only=production",
+		"start": "ts-node ./src/index.ts",
+		"start:watch": "nodemon"
 	},
 	"version": "1.0.0"
 }

@@ -122,4 +122,5 @@ dist
 .env.test.local
 .env.production.local
 
-server/public
+/server/public
+/public

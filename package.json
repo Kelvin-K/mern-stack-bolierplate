@@ -7,10 +7,11 @@
     "install": "npm-run-all install:*",
     "install:server": "cd ./server && npm install",
     "install:client": "cd ./client && npm install",
-    "build": "npm run build:*",
+    "build": "npm-run-all build:*",
     "build:server": "cd ./server && npm run build",
     "build:client": "cd ./client && npm run build",
-    "start:server": "cd ./server && npm start",
+	"start": "cd dist && node ./index.js",
+    "start:server": "cd ./server && npm start:watch",
     "start:client": "cd ./client && npm start"
   },
   "keywords": [],
