@@ -28,7 +28,7 @@
 	"name": "server",
 	"scripts": {
 		"build": "npx tsc",
-		"postbuild" : "@powershell copy package.json ../dist/package.json && cd ../dist && npm install --only=production",
+		"postbuild" : "@powershell copy package.json ../build/package.json && cd ../build && npm install --only=production",
 		"start": "ts-node ./src/index.ts",
 		"start:watch": "nodemon"
 	},

@@ -32,3 +32,18 @@ below are the default values for environment variables
 PORT=9000
 DATABASE_CONNECTION_STRING=mongodb://127.0.0.1:27017/my_database
 ```
+
+## Production Build
+
+Run below command to get complete build inside `build` directory.
+
+```powershell
+npm run build
+```
+
+after that you can use entire build directory into your server.
+If you want to run production build locally you can just enter below command in root directory.
+
+```powershell
+npm run start
+```
