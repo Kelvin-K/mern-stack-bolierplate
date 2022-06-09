@@ -1,6 +1,5 @@
 {
 	"files.exclude": {
-		"**/node_modules": true,
-		"server/public": true
+		"**/node_modules": true
 	}
 }
