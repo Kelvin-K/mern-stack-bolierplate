@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import BasePage from './pages/basePage';
 import store from './store/store';
-import "./styles/components/App.scss";
+import "./styles/App.scss";
 
 export default class App extends Component {
 	render() {
