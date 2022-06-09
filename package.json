@@ -11,7 +11,7 @@
     "build:server": "cd ./server && npm run build",
     "build:client": "cd ./client && npm run build",
 	"start": "cd build && node ./index.js",
-    "start:server": "cd ./server && npm start:watch",
+    "start:server": "cd ./server && npm run start:watch",
     "start:client": "cd ./client && npm start"
   },
   "keywords": [],
