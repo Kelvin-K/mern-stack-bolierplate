@@ -8,10 +8,13 @@ class UserRouter {
 
 	constructor() {
 		this.router = express.Router();
+
 		this.router.get("/", this.getUsers);
-		this.router.post("/", this.addNewUser);
+
 		this.router.get("/:id", this.getUser);
+		this.router.post("/", this.addNewUser);
 		this.router.patch("/:id", this.patchUser);
+		this.router.delete("/:id", this.deleteUser);
 	}
 
 	getUser = async (req: Request, res: Response) => {
@@ -41,6 +44,16 @@ class UserRouter {
 	patchUser = async (req: Request, res: Response) => {
 		try {
 			await User.findOneAndUpdate({ _id: req.params.id }, req.body);
+			res.status(HttpStatusCodes.OK).send();
+		}
+		catch (error) {
+			res.status(HttpStatusCodes.BAD_REQUEST).send(error);
+		}
+	}
+
+	deleteUser = async (req: Request, res: Response) => {
+		try {
+			await User.deleteOne({ _id: req.params.id });
 			res.status(HttpStatusCodes.OK).send();
 		}
 		catch (error) {

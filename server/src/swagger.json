@@ -134,6 +134,26 @@
 						}
 					}
 				}
+			},
+			"delete": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Get specific user in system",
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				},
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "Id of the user",
+						"type": "string"
+					}
+				]
 			}
 		}
 	},
@@ -152,6 +172,12 @@
 					"type": "string"
 				},
 				"lastName": {
+					"type": "string"
+				},
+				"username": {
+					"type": "string"
+				},
+				"password": {
 					"type": "string"
 				}
 			}
