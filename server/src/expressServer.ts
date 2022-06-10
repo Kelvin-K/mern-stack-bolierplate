@@ -6,7 +6,7 @@ import mongoose from "mongoose";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import LoggingMiddleWare from "./middleware/loggingMiddleWare";
-import HealthCheckRouter from "./routers/healthCheckRouter";
+import HealthRouter from "./routers/healthRouter";
 import UserRouter from "./routers/userRouter";
 
 const swaggerDocument = require('./swagger.json');
@@ -54,7 +54,7 @@ class ExpressServer {
 
 	configureRoutes = () => {
 		// api
-		this.app.use("/api/health", new HealthCheckRouter().router);
+		this.app.use("/api/health", new HealthRouter().router);
 		this.app.use("/api/users", new UserRouter().router);
 
 		// client
