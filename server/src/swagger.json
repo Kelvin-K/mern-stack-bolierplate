@@ -172,17 +172,17 @@
 					"type": "string",
 					"uniqueItems": true
 				},
-				"firstName": {
-					"type": "string"
-				},
-				"lastName": {
-					"type": "string"
-				},
 				"username": {
 					"type": "string",
 					"uniqueItems": true
 				},
 				"password": {
+					"type": "string"
+				},
+				"firstName": {
+					"type": "string"
+				},
+				"lastName": {
 					"type": "string"
 				}
 			}
