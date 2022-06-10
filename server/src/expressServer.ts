@@ -64,7 +64,7 @@ class ExpressServer {
 	start = async (port: any, databaseUrl: string) => {
 		try {
 			await mongoose.connect(databaseUrl);
-			this.app.listen(port, () => console.log(`Server started listening at http://localhost:${port}/`));
+			this.app.listen(port, () => console.log(`Server started listening at http://localhost:${port}/\nAccess API documentation by http://localhost:${port}/api-docs`));
 		}
 		catch (error) {
 			console.log(`Server failed to start.\nOriginal Error: ${JSON.stringify(error, null, 2)}`);
