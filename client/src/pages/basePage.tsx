@@ -1,32 +1,15 @@
-import { Component, lazy, Suspense } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import Loading from '../components/loading';
-import RouteWrapper from '../wrapper/routeWrapper';
+import { Component } from 'react';
+import Footer from '../components/Footer';
+import Header from '../components/header';
 
-const HomePage = lazy(() => import('./homePage'));
-const NotFoundPage = lazy(() => import('./notFoundPage'));
-
-export default class BasePage extends Component {
+export default class BasePage extends Component<any, any> {
 	render() {
 		return (
-			<div className="BasePage">
-				<Switch>
-					<Route exact path="/">
-						<RouteWrapper routeType='common'>
-							<Suspense fallback={<Loading />}>
-								<HomePage />
-							</Suspense>
-						</RouteWrapper>
-					</Route>
-					<Route path="/">
-						<RouteWrapper routeType='common'>
-							<Suspense fallback={<Loading />}>
-								<NotFoundPage />
-							</Suspense>
-						</RouteWrapper>
-					</Route>
-				</Switch>
-			</div>
+			<>
+				<Header />
+				{this.props.children}
+				<Footer />
+			</>
 		);
 	}
 }

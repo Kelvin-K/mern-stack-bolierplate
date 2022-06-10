@@ -1,16 +1,26 @@
-import React, { Component } from 'react';
+import { Component, lazy } from 'react';
 import { Provider } from 'react-redux';
-import { BrowserRouter } from 'react-router-dom';
-import BasePage from './pages/basePage';
+import { BrowserRouter, Switch } from 'react-router-dom';
 import store from './store/store';
 import "./styles/App.scss";
+import RouteWrapper from './wrapper/routeWrapper';
+
+const HomePage = lazy(() => import('./pages/homePage'));
+const NotFoundPage = lazy(() => import('./pages/notFoundPage'));
 
 export default class App extends Component {
 	render() {
 		return (
 			<BrowserRouter>
 				<Provider store={store}>
-					<BasePage />
+					<Switch>
+						<RouteWrapper exact path="/" routeType='common'>
+							<HomePage />
+						</RouteWrapper>
+						<RouteWrapper path="/" standAlonePage={true} routeType='common'>
+							<NotFoundPage />
+						</RouteWrapper>
+					</Switch>
 				</Provider>
 			</BrowserRouter>
 		);

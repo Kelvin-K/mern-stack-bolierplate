@@ -1,9 +1,14 @@
-import React, { Component } from 'react';
+import React, { Component, Suspense } from 'react';
 import { connect } from 'react-redux';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Route } from 'react-router-dom';
+import Loading from '../components/loading';
+import BasePage from '../pages/basePage';
 import { RootState } from '../store/store';
 
 interface OwnProps {
+	exact?: boolean | undefined;
+	path?: string | readonly string[] | undefined;
+	standAlonePage?: boolean;
 	routeType: "common" | "public" | "publicOnly" | "private";
 	children: React.ReactNode;
 }
@@ -15,23 +20,36 @@ interface StateProps extends OwnProps {
 export class RouteWrapperComponent extends Component<StateProps, any>
 {
 	render() {
+		if (this.props.routeType === "publicOnly" && this.props.isAuthenticated) {
+			return (
+				<Redirect to="/" />
+			);
+		}
+
+		if (this.props.routeType === "private" && !this.props.isAuthenticated) {
+			return (
+				<Redirect to="/" />
+			);
+		}
+
 		if (
 			this.props.routeType === "common"
 			|| this.props.routeType === "public"
 			|| (this.props.routeType === "publicOnly" && !this.props.isAuthenticated)
 			|| (this.props.routeType === "private" && this.props.isAuthenticated)
-		)
-			return this.props.children;
-
-		if (this.props.routeType === "publicOnly" && this.props.isAuthenticated)
+		) {
 			return (
-				<Redirect to="/" />
+				<Route exact={this.props.exact} path={this.props.path}>
+					<Suspense fallback={<Loading />}>
+						{
+							this.props.standAlonePage
+								? this.props.children
+								: <BasePage>{this.props.children}</BasePage>
+						}
+					</Suspense>
+				</Route>
 			);
-
-		if (this.props.routeType === "private" && !this.props.isAuthenticated)
-			return (
-				<Redirect to="/" />
-			);
+		}
 	}
 }
 
