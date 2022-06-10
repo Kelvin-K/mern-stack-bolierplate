@@ -11,9 +11,7 @@ interface IUser extends Document {
 	validatePassword: (candidatePassword: string, cb: (error: Error | null, isMatch?: boolean) => {}) => {};
 }
 
-let firstNameLastNameValidator = (value: string) => {
-	return /^[a-z ,.'-]+$/i.test(value);
-}
+let firstNameLastNameValidator = (value: string) => /^[a-z ,.'-]+$/i.test(value);
 
 var userSchema: Schema = new Schema({
 	_id: {
@@ -25,11 +23,19 @@ var userSchema: Schema = new Schema({
 		required: true,
 		index: {
 			unique: true
+		},
+		validate: {
+			validator: (value: string) => /^(?=.{8,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$/.test(value),
+			message: (props: any) => `${props.value} does not fall within valid username criteria!`
 		}
 	},
 	password: {
 		type: String,
-		required: true
+		required: true,
+		validate: {
+			validator: (value: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/.test(value),
+			message: () => `Password does not fall within valid criteria!`
+		}
 	},
 	firstName: {
 		type: "string",
