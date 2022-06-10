@@ -2,15 +2,8 @@
 	"swagger": "2.0",
 	"info": {
 		"version": "1.0.0",
-		"title": "Mern Stack Boilerplate",
-		"description": "My User Project Application API",
-		"license": {
-			"name": "MIT",
-			"url": "https://opensource.org/licenses/MIT"
-		}
+		"title": "Mern Stack Boilerplate"
 	},
-	"host": "localhost:9000",
-	"basePath": "/",
 	"tags": [
 		{
 			"name": "Health",
@@ -20,9 +13,6 @@
 			"name": "Users",
 			"description": "API for users in the system"
 		}
-	],
-	"schemes": [
-		"http"
 	],
 	"consumes": [
 		"application/json"
@@ -64,7 +54,7 @@
 				"tags": [
 					"Users"
 				],
-				"description": "Create new user in system",
+				"summary": "Create new user in system",
 				"parameters": [
 					{
 						"name": "user",
