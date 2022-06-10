@@ -168,6 +168,10 @@
 					"type": "string",
 					"uniqueItems": true
 				},
+				"email": {
+					"type": "string",
+					"uniqueItems": true
+				},
 				"firstName": {
 					"type": "string"
 				},
@@ -175,7 +179,8 @@
 					"type": "string"
 				},
 				"username": {
-					"type": "string"
+					"type": "string",
+					"uniqueItems": true
 				},
 				"password": {
 					"type": "string"

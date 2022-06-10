@@ -18,6 +18,17 @@ var userSchema: Schema = new Schema({
 		type: Schema.Types.ObjectId,
 		auto: true,
 	},
+	email: {
+		type: String,
+		required: true,
+		index: {
+			unique: true
+		},
+		validate: {
+			validator: (value: string) => /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(value),
+			message: () => `Invalid email address!`
+		}
+	},
 	username: {
 		type: String,
 		required: true,
