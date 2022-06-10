@@ -46,7 +46,6 @@ class UserRouter {
 		catch (error) {
 			res.status(HttpStatusCodes.BAD_REQUEST).send(error);
 		}
-
 	}
 }
 
