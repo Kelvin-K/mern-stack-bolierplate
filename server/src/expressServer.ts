@@ -4,9 +4,12 @@ import cors from "cors";
 import express, { Express, Request, Response } from "express";
 import mongoose from "mongoose";
 import path from "path";
+import swaggerUi from "swagger-ui-express";
 import LoggingMiddleWare from "./middleware/loggingMiddleWare";
 import HealthCheckRouter from "./routers/healthCheckRouter";
 import UserRouter from "./routers/userRouter";
+
+const swaggerDocument = require('./swagger.json');
 
 class ExpressServer {
 
@@ -45,12 +48,14 @@ class ExpressServer {
 
 		// Serve static files
 		this.app.use(express.static('public'));
+
+		this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 	}
 
 	configureRoutes = () => {
 		// api
 		this.app.use("/api/health", new HealthCheckRouter().router);
-		this.app.use("/api/user", new UserRouter().router);
+		this.app.use("/api/users", new UserRouter().router);
 
 		// client
 		this.app.get("*", (req: Request, res: Response) => res.sendFile(path.resolve('public', 'index.html')));

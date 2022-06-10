@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { RootState } from '../store/store';
@@ -22,7 +22,7 @@ export class HomePageComponent extends Component<StateProps & DispatchProps, any
 	}
 
 	callApi = async () => {
-		const response = await fetch('/api/user');
+		const response = await fetch('/api/users');
 		const body = await response.json();
 
 		return body;
