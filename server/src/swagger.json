@@ -102,6 +102,38 @@
 						"type": "string"
 					}
 				]
+			},
+			"patch": {
+				"tags": [
+					"Users"
+				],
+				"summary": "Update user",
+				"parameters": [
+					{
+						"name": "id",
+						"in": "path",
+						"required": true,
+						"description": "Id of the user",
+						"type": "string"
+					},
+					{
+						"name": "user",
+						"in": "body",
+						"description": "User that we want to create",
+						"required": true,
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "User is updated",
+						"schema": {
+							"$ref": "#/definitions/User"
+						}
+					}
+				}
 			}
 		}
 	},

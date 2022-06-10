@@ -11,6 +11,7 @@ class UserRouter {
 		this.router.get("/", this.getUsers);
 		this.router.post("/", this.addNewUser);
 		this.router.get("/:id", this.getUser);
+		this.router.patch("/:id", this.patchUser);
 	}
 
 	getUser = async (req: Request, res: Response) => {
@@ -35,6 +36,17 @@ class UserRouter {
 		catch (error) {
 			res.status(HttpStatusCodes.BAD_REQUEST).send(error);
 		}
+	}
+
+	patchUser = async (req: Request, res: Response) => {
+		try {
+			await User.findOneAndUpdate({ _id: req.params.id }, req.body);
+			res.status(HttpStatusCodes.OK).send();
+		}
+		catch (error) {
+			res.status(HttpStatusCodes.BAD_REQUEST).send(error);
+		}
+
 	}
 }
 
