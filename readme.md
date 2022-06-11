@@ -37,15 +37,8 @@ you can either create `.env` file or add environment variables in your server
 
 ## Production Build
 
-Run below command to get complete build inside `build` directory.
+Run below command to get production build inside docker image
 
 ```powershell
-npm run build
-```
-
-after that you can use entire build directory into your server.
-If you want to run production build locally you can just enter below command in root directory.
-
-```powershell
-npm run start
+docker-compose build && docker-compose up
 ```
