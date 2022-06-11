@@ -1,14 +1,25 @@
 version: "3.8"
 services:
-    mongodb:
-        image: mongo
-        container_name: mongodb
-        environment:
-            - PUID=1000
-            - GUID=1000
-        volumes:
-            - mongodata:/data/db
-        ports:
-            - 27017:27017
+  mongo:
+    image: mongo
+    container_name: mongo
+    environment:
+      - PUID=1000
+      - GUID=1000
+    volumes:
+      - mongodata:/data/db
+    ports:
+      - 27017:27017
+  app:
+    container_name: app
+    build: .
+    ports:
+      - 9000:9000
+    depends_on:
+      - 'mongo'
+    links:
+      - mongo
+    environment:
+      - DATABASE_CONNECTION_STRING=mongodb://mongo:27017/my_database
 volumes:
-    mongodata:
+  mongodata:

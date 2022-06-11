@@ -32,7 +32,7 @@
     "name": "server",
     "scripts": {
         "build": "npx tsc",
-        "postbuild": "@powershell copy package.json ../build/package.json && @powershell copy src/swagger.json ../build/swagger.json && cd ../build && npm install --only=production",
+        "postbuild": "cp package.json ../build/package.json && cp src/swagger.json ../build/swagger.json && cd ../build && npm install --only=production",
         "start": "ts-node ./src/index.ts",
         "start:watch": "nodemon"
     },
