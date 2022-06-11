@@ -4,10 +4,12 @@ import { Document, Model, model, Schema } from "mongoose";
 const SALT_WORK_FACTOR = 10;
 
 interface IUser extends Document {
+	email: string;
 	username: string;
 	password: string;
 	firstName: string;
 	lastName: string;
+	contactNumber: string;
 	validatePassword: (candidatePassword: string, cb: (error: Error | null, isMatch?: boolean) => {}) => {};
 }
 
@@ -44,23 +46,30 @@ var userSchema: Schema = new Schema({
 		type: String,
 		required: true,
 		validate: {
-			validator: (value: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,10}$/.test(value),
-			message: () => `Password does not fall within valid criteria!`
+			validator: (value: string) => /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/.test(value),
+			message: () => `Password does not fall within accepted criteria!`
 		}
 	},
 	firstName: {
-		type: "string",
+		type: String,
 		required: true,
 		validate: {
 			validator: firstNameLastNameValidator,
-			message: (props: any) => `${props.value} is not a valid phone first name!`
+			message: (props: any) => `${props.value} is not a valid first name!`
 		}
 	},
 	lastName: {
-		type: "string",
+		type: String,
 		required: true,
 		validate: {
 			validator: firstNameLastNameValidator,
+			message: (props: any) => `${props.value} is not a valid last name!`
+		}
+	},
+	contactNumber: {
+		type: String,
+		validate: {
+			validator: (value: string) => /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/.test(value),
 			message: (props: any) => `${props.value} is not a valid phone last name!`
 		}
 	}

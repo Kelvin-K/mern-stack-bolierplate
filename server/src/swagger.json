@@ -160,6 +160,9 @@
 	"definitions": {
 		"User": {
 			"required": [
+				"email",
+				"username",
+				"password",
 				"firstName",
 				"lastName"
 			],
@@ -183,6 +186,9 @@
 					"type": "string"
 				},
 				"lastName": {
+					"type": "string"
+				},
+				"contactNumber": {
 					"type": "string"
 				}
 			}
