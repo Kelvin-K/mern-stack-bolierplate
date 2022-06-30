@@ -11,7 +11,7 @@ const store = configureStore({
 	])
 });
 
-(window as any).store = store;
-export type RootState = ReturnType<typeof store.getState>
+export type StoreState = ReturnType<typeof store.getState>;
+export type StoreDispatch = typeof store.dispatch;
 
 export default store;

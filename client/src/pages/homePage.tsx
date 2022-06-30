@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { RootState } from '../store/store';
+import { StoreDispatch, StoreState } from '../store/store';
 
 interface StateProps {
 	isAuthenticated: boolean;
@@ -34,24 +34,24 @@ export class HomePageComponent extends Component<StateProps & DispatchProps, any
 				Welcome to home page.
 				<br />
 				<br />
-				Authenticated: {this.props.isAuthenticated.toString()}
+				Authenticated: { this.props.isAuthenticated.toString() }
 				<br />
-				First Name: {this.props.firstName || "NA"}
+				First Name: { this.props.firstName || "NA" }
 				<br />
-				Last Name: {this.props.lastName || "NA"}
+				Last Name: { this.props.lastName || "NA" }
 			</div>
 		);
 	}
 }
 
-function connectStateToProps(state: RootState, ownProps: any): StateProps {
+function connectStateToProps(state: StoreState, ownProps: any): StateProps {
 	return {
 		...ownProps,
 		...state.user
 	};
 }
 
-function connectDispatchToProps(dispatch: any): DispatchProps {
+function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps {
 	return bindActionCreators({ ...new DispatchProps() }, dispatch);
 }
 

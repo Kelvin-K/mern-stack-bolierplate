@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Redirect, Route } from 'react-router-dom';
 import Loading from '../components/loading';
 import BasePage from '../pages/basePage';
-import { RootState } from '../store/store';
+import { StoreState } from '../store/store';
 
 interface OwnProps {
 	exact?: boolean | undefined;
@@ -39,12 +39,12 @@ export class RouteWrapperComponent extends Component<StateProps, any>
 			|| (this.props.routeType === "private" && this.props.isAuthenticated)
 		) {
 			return (
-				<Route exact={this.props.exact} path={this.props.path}>
-					<Suspense fallback={<Loading />}>
+				<Route exact={ this.props.exact } path={ this.props.path }>
+					<Suspense fallback={ <Loading /> }>
 						{
 							this.props.standAlonePage
 								? this.props.children
-								: <BasePage>{this.props.children}</BasePage>
+								: <BasePage>{ this.props.children }</BasePage>
 						}
 					</Suspense>
 				</Route>
@@ -53,12 +53,12 @@ export class RouteWrapperComponent extends Component<StateProps, any>
 	}
 }
 
-function connectStateToProps(state: RootState, ownProps: OwnProps): StateProps {
+function connectStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
 	return {
 		...ownProps,
 		isAuthenticated: state.user.isAuthenticated
 	};
 }
 
-let RouteWrapper = connect(connectStateToProps,)(RouteWrapperComponent);
+let RouteWrapper = connect(connectStateToProps)(RouteWrapperComponent);
 export default RouteWrapper;

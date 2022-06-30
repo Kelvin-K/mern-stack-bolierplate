@@ -1,4 +1,4 @@
-import { Reducer } from "redux";
+import { Reducer } from "@reduxjs/toolkit";
 
 export class UserState {
 	isAuthenticated: boolean = false;

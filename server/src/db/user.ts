@@ -78,6 +78,9 @@ var userSchema: Schema = new Schema({
 userSchema.pre('save', function (this: IUser, next: any) {
 	let user = this;
 
+	if (user.email)
+		user.email = user.email.toLowerCase();
+
 	if (!user.isModified('password'))
 		return next();
 
