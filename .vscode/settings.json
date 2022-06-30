@@ -1,5 +1,11 @@
 {
+	"editor.codeActionsOnSave": {
+		"source.organizeImports": true
+	},
+	"editor.formatOnSave": true,
+	"editor.wordSeparators": "`~!@%^&*()-=+[{]}\\|;:'\",.<>/?",
 	"files.exclude": {
 		"**/node_modules": true
-	}
+	},
+	"typescript.format.insertSpaceAfterOpeningAndBeforeClosingJsxExpressionBraces": true
 }
