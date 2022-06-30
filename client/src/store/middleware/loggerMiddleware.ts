@@ -1,6 +1,8 @@
-const LoggerMiddleware = (store: any) => (next: any) => (action: any) => {
+import { Dispatch, MiddlewareAPI } from '@reduxjs/toolkit';
+
+const LoggerMiddleware = (store: MiddlewareAPI) => (dispatch: Dispatch) => (action: any) => {
 	console.log('dispatching', action);
-	return next(action);
+	return dispatch(action);
 }
 
 export default LoggerMiddleware;

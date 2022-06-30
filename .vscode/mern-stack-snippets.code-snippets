@@ -216,6 +216,19 @@
 			"}"
 		]
 	},
+	"Redux Middleware": {
+		"prefix": "rmiddle",
+		"body": [
+			"import { Dispatch, MiddlewareAPI } from '@reduxjs/toolkit';",
+			"",
+			"const ${1:${TM_FILENAME_BASE/(.)/${1:/upcase}/}} = (store: MiddlewareAPI) => (dispatch: Dispatch) => (action: any) => {",
+			"\tconsole.log('dispatching', action);",
+			"\treturn dispatch(action);",
+			"}",
+			"",
+			"export default $1;",
+		]
+	}
 	"express middleware": {
 		"prefix": "middleware",
 		"body": [
