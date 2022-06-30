@@ -1,0 +1,269 @@
+{
+	"print log": {
+		"prefix": "clog",
+		"body": [
+			"console.log($1);",
+		],
+		"scope": "javascript,typescript,javascriptreact,typescriptreact"
+	},
+	"instance of interface": {
+		"prefix": "interface",
+		"body": [
+			"",
+			"interface ${1:${TM_FILENAME_BASE/(.)/${1:/upcase}/}}",
+			"{",
+			"$2",
+			"}",
+			"",
+			"export default $1;"
+		],
+	},
+	"instance of class": {
+		"prefix": "class",
+		"body": [
+			"",
+			"class ${1:${TM_FILENAME_BASE/(.)/${1:/upcase}/}}",
+			"{",
+			"$2",
+			"}",
+			"",
+			"export default $1;"
+		],
+		"scope": "javascript,typescript,javascriptreact,typescriptreact"
+	},
+	"constructor": {
+		"prefix": "ctor",
+		"body": [
+			"constructor()",
+			"{",
+			"\t$1",
+			"}"
+		]
+	},
+	"constructor with props": {
+		"prefix": "ctorp",
+		"body": [
+			"constructor(props:any)",
+			"{",
+			"\tsuper(props);",
+			"\t$1",
+			"}"
+		]
+	},
+	"initialize React Class": {
+		"prefix": "init",
+		"body": [
+			"import React, { Component } from 'react';",
+			"",
+			"export default class ${1:${TM_FILENAME_BASE/(.)/${1:/upcase}/}} extends Component",
+			"{",
+			"\trender()",
+			"\t{",
+			"\t\treturn (",
+			"\t\t\t<div className=\"${1:${TM_FILENAME_BASE}}\">",
+			"\t\t\t\t$2",
+			"\t\t\t</div>",
+			"\t\t);",
+			"\t}",
+			"}"
+		]
+	},
+	"initialize React class with form": {
+		"prefix": "initForm",
+		"body": [
+			"import React, { Component } from 'react';",
+			"import './App.scss';",
+			"",
+			"class FormProperties {",
+			"\tusername: string = \"\";",
+			"}",
+			"",
+			"class AppState {",
+			"\tfields: FormProperties = new FormProperties();",
+			"\terrors: FormProperties = new FormProperties();",
+			"}",
+			"",
+			"export default class App extends Component<{}, AppState> {",
+			"\tconstructor(props: any) {",
+			"\t\tsuper(props);",
+			"\t\tthis.state = new AppState();",
+			"\t}",
+			"",
+			"\thandleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {",
+			"\t\tthis.setState(state => ({",
+			"\t\t\t...state,",
+			"\t\t\tfields: {",
+			"\t\t\t\t...state.fields,",
+			"\t\t\t\t[ev.target.name]: ev.target.value",
+			"\t\t\t}",
+			"\t\t}));",
+			"\t}",
+			"",
+			"\tsubmitForm = (ev: React.FormEvent<HTMLFormElement>) => {",
+			"\t\tev.preventDefault();",
+			"",
+			"\t\tif (!this.state.fields.username) {",
+			"\t\t\tthis.state.errors.username = \"Invalid username.\";",
+			"\t\t}",
+			"\t}",
+			"",
+			"\trender() {",
+			"\t\treturn (",
+			"\t\t\t<form className=\"App\" onSubmit={this.submitForm}>",
+			"\t\t\t\t<div className=\"form-group\">",
+			"\t\t\t\t\t<label>",
+			"\t\t\t\t\t\t<div className=\"form-label\">Username :</div>",
+			"\t\t\t\t\t\t<input type=\"text\" name=\"username\" className=\"form-control\" value={this.state.fields.username} onChange={this.handleChange} />",
+			"\t\t\t\t\t\t<div className=\"error\">{this.state.errors.username}</div>",
+			"\t\t\t\t\t</label>",
+			"\t\t\t\t</div>",
+			"\t\t\t\t<div className=\"form-group\">",
+			"\t\t\t\t\t<button className=\"form-button\">Submit</button>",
+			"\t\t\t\t</div>",
+			"\t\t\t</form>",
+			"\t\t);",
+			"\t}",
+			"}"
+		]
+	},
+	"initialize React Class with Redux Store": {
+		"prefix": "initr",
+		"body": [
+			"import React, { Component } from 'react';",
+			"import { connect } from 'react-redux';",
+			"import { StoreDispatch, StoreState } from '../store/store';",
+			"",
+			"interface StateProps",
+			"{",
+			"",
+			"}",
+			"",
+			"class DispatchProps",
+			"{",
+			"",
+			"}",
+			"",
+			"export class ${1:${TM_FILENAME_BASE/(.)/${1:/upcase}/}}Component extends Component<StateProps & DispatchProps, any>",
+			"{",
+			"\trender()",
+			"\t{",
+			"\t\treturn (",
+			"\t\t\t<div className=\"${1:${TM_FILENAME_BASE}}\">",
+			"\t\t\t\t$2",
+			"\t\t\t</div>",
+			"\t\t);",
+			"\t}",
+			"}",
+			"",
+			"function connectStateToProps(state: StoreState, ownProps: any): StateProps",
+			"{",
+			"\treturn {",
+			"\t\t...ownProps,",
+			"\t};",
+			"}",
+			"",
+			"function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps",
+			"{",
+			"\treturn {",
+			"\t\t",
+			"\t}",
+			"}",
+			"",
+			"let $1 = connect(connectStateToProps, connectDispatchToProps)($1Component);",
+			"export default $1;"
+		]
+	},
+	"redux store": {
+		"prefix": "rstore",
+		"body": [
+			"import { configureStore } from '@reduxjs/toolkit';",
+			"",
+			"const store = configureStore({",
+			"\treducer: {",
+			"\t\t$1",
+			"\t},",
+			"\tmiddleware: (getDefaultMiddleware) => getDefaultMiddleware().concat([",
+			"\t\t",
+			"\t])",
+			"});",
+			"",
+			"export type StoreState = ReturnType<typeof store.getState>;",
+			"export type StoreDispatch = typeof store.dispatch;",
+			"",
+			"export default store;"
+		]
+	},
+	"Redux Reducer": {
+		"prefix": "reducer",
+		"body": [
+			"import { Reducer } from \"@reduxjs/toolkit\";",
+			"",
+			"export class ${1:${TM_FILENAME_BASE/(.)/${1:/upcase}/}}State",
+			"{",
+			"",
+			"}",
+			"",
+			"export type $1Action =",
+			"\t{ type: \"XYZ\" }",
+			"",
+			"export const $1Reducer:Reducer<$1State,$1Action> = (state: $1State = new $1State(), action: $1Action) =>",
+			"{",
+			"\tswitch (action.type)",
+			"\t{",
+			"\t\tdefault:",
+			"\t\treturn state;",
+			"\t}",
+			"}"
+		]
+	},
+	"express middleware": {
+		"prefix": "middleware",
+		"body": [
+			"import { NextFunction, Request, Response } from 'express';",
+			"",
+			"const ${1:${TM_FILENAME_BASE/(.)/${1:/upcase}/}} = (req: Request, res: Response, next: NextFunction) => {",
+			"\t$2",
+			"}",
+			"",
+			"export default $1;"
+		]
+	},
+	"express router": {
+		"prefix": "router",
+		"body": [
+			"import express, { NextFunction, Request, Response, Router } from \"express\";",
+			"",
+			"class ${1:${TM_FILENAME_BASE/(.)/${1:/upcase}/}} {",
+			"\trouter: Router;",
+			"\tconstructor() {",
+			"\t\tthis.router = express.Router();",
+			"\t\tthis.router.get(\"/\", this.get$1);",
+			"\t}",
+			"",
+			"\tget$1 = (req: Request, res: Response, next: NextFunction) => {",
+			"\t\tres.status(200).send(\"You reached get $1 function\");",
+			"\t}",
+			"}",
+			"",
+			"export default $1;",
+		]
+	},
+	"express request": {
+		"prefix": "request",
+		"body": [
+			"$1 = (req: Request, res: Response) => {",
+			"\t$2",
+			"}"
+		],
+		"scope": "typescript"
+	},
+	"express request Full": {
+		"prefix": "requestFull",
+		"body": [
+			"$1 = (req: Request, res: Response, next: NextFunction) => {",
+			"\t$2",
+			"}"
+		],
+		"scope": "typescript"
+	},
+}
