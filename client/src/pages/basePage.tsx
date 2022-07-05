@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import Footer from '../components/Footer';
+import Footer from '../components/footer';
 import Header from '../components/header';
 
 export default class BasePage extends Component<any, any> {
@@ -7,7 +7,7 @@ export default class BasePage extends Component<any, any> {
 		return (
 			<>
 				<Header />
-				{this.props.children}
+				{ this.props.children }
 				<Footer />
 			</>
 		);

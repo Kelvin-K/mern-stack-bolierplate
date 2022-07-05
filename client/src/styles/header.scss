@@ -1,0 +1,28 @@
+header {
+	height: 50px;
+	background-color: black;
+	display: flex;
+
+	section {
+		display: flex;
+		justify-content: space-between;
+		flex-grow: 1;
+	}
+
+	a {
+		height: 50px;
+		line-height: 50px;
+		padding: 0px 10px;
+		text-decoration: none;
+		color: white;
+
+		&:hover {
+			color: gray;
+		}
+	}
+
+	.brand_name:hover {
+		color: black;
+		background-color: gray;
+	}
+}
