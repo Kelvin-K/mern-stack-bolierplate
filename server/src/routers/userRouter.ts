@@ -33,11 +33,14 @@ class UserRouter {
 	addNewUser = async (req: Request, res: Response) => {
 		const user = new User(req.body);
 		try {
-			await user.save();
+			await user.save()
 			res.status(HttpStatusCodes.OK).send();
 		}
-		catch (error) {
-			res.status(HttpStatusCodes.BAD_REQUEST).send(error);
+		catch (error: any) {
+			if (error.code === "DUPLICATE_FIELD")
+				res.status(HttpStatusCodes.CONFLICT).send(error.errors);
+			else
+				res.status(HttpStatusCodes.BAD_REQUEST).send(error);
 		}
 	}
 

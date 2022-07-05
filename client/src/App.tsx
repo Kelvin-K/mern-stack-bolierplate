@@ -7,6 +7,7 @@ import RouteWrapper from './wrapper/routeWrapper';
 
 const HomePage = lazy(() => import('./pages/homePage'));
 const NotFoundPage = lazy(() => import('./pages/notFoundPage'));
+const SignUpPage = lazy(() => import('./pages/signUpPage'));
 
 export default class App extends Component {
 	render() {
@@ -16,6 +17,9 @@ export default class App extends Component {
 					<Switch>
 						<RouteWrapper exact path="/" routeType='common'>
 							<HomePage />
+						</RouteWrapper>
+						<RouteWrapper path="/signup" routeType='publicOnly'>
+							<SignUpPage />
 						</RouteWrapper>
 						<RouteWrapper path="/" standAlonePage={ true } routeType='common'>
 							<NotFoundPage />
