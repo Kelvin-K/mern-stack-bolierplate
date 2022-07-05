@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
 import { StoreDispatch, StoreState } from '../store/store';
 import "../styles/header.scss";
 
@@ -49,7 +48,9 @@ function connectStateToProps(state: StoreState, ownProps: any): StateProps {
 }
 
 function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps {
-	return bindActionCreators({ ...new DispatchProps() }, dispatch);
+	return {
+
+	};
 }
 
 let Header = connect(connectStateToProps, connectDispatchToProps)(HeaderComponent);

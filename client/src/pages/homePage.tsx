@@ -1,6 +1,5 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { StoreDispatch, StoreState } from '../store/store';
 
 interface StateProps {
@@ -52,7 +51,9 @@ function connectStateToProps(state: StoreState, ownProps: any): StateProps {
 }
 
 function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps {
-	return bindActionCreators({ ...new DispatchProps() }, dispatch);
+	return {
+
+	};
 }
 
 let HomePage = connect(connectStateToProps, connectDispatchToProps)(HomePageComponent);
