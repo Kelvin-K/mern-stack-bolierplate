@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
 import LoggingMiddleWare from "./middleware/loggingMiddleWare";
+import AuthenticateRoute from "./routers/authenticateRoute";
 import HealthRouter from "./routers/healthRouter";
 import UserRouter from "./routers/userRouter";
 
@@ -56,6 +57,7 @@ class ExpressServer {
 		// api
 		this.app.use("/api/health", new HealthRouter().router);
 		this.app.use("/api/users", new UserRouter().router);
+		this.app.use("/api/authenticate", new AuthenticateRoute().router);
 
 		// client
 		this.app.get("*", (req: Request, res: Response) => res.sendFile(path.resolve('public', 'index.html')));

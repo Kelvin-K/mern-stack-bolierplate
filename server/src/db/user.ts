@@ -1,20 +1,25 @@
 import bcrypt from "bcrypt";
-import { Document, Model, model, Schema } from "mongoose";
+import { Document, model, Schema } from "mongoose";
 import { validateContactNumber, validateEmail, validateFirstOrLastName, validatePassword, validateUsername } from "../common/validators";
 
 const SALT_WORK_FACTOR = 10;
 
-interface IUser extends Document {
+interface IUser {
 	username: string;
 	password: string;
 	firstName: string;
 	lastName: string;
 	email: string;
 	contactNumber: string;
-	validatePassword: (candidatePassword: string, cb: (error: Error | null, isMatch?: boolean) => {}) => {};
 }
 
-var userSchema: Schema = new Schema({
+export interface IUserDocument extends IUser, Document {
+	refreshToken: string;
+	setPassword: (password: string) => Promise<void>;
+	validatePassword: (candidatePassword: string) => Promise<{ error: Error | null, isMatch?: boolean }>;
+}
+
+var userSchema = new Schema<IUserDocument>({
 	_id: {
 		type: Schema.Types.ObjectId,
 		auto: true,
@@ -71,14 +76,19 @@ var userSchema: Schema = new Schema({
 			validator: validateContactNumber,
 			message: (props: any) => `${props.value} is not a valid phone last name!`
 		}
+	},
+	refreshToken: {
+		type: String
 	}
 });
 
-userSchema.pre('save', function (this: IUser, next: any) {
+userSchema.pre<IUserDocument>('save', function (next: any) {
 	let user = this;
 
 	if (user.email)
 		user.email = user.email.toLowerCase();
+
+	console.log("user modified:", user.isModified('password'));
 
 	if (!user.isModified('password'))
 		return next();
@@ -93,7 +103,7 @@ userSchema.pre('save', function (this: IUser, next: any) {
 	});
 });
 
-userSchema.post('save', function (this: IUser, error: any, res: any, next: any) {
+userSchema.post<IUserDocument>('save', function (error: any, res: any, next: any) {
 	if (error.name === "MongoServerError" && error.code === 11000) {
 		let duplicateFields: any[] = [];
 		for (const key in error.keyValue) {
@@ -108,13 +118,29 @@ userSchema.post('save', function (this: IUser, error: any, res: any, next: any) 
 		next(error);
 });
 
-userSchema.methods.validatePassword = function (this: IUser, candidatePassword: string, cb: (error: Error | null, isMatch?: boolean) => {}) {
-	bcrypt.compare(candidatePassword, this.password, (error, isMatch) => {
-		if (error) return cb(error);
-		cb(null, isMatch);
+userSchema.methods.setPassword = function (candidatePassword: string) {
+	return new Promise((resolve, reject) => {
+		const user = this;
+		bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
+			if (err) return reject(err);
+			bcrypt.hash(user.password, salt, function (err, hash) {
+				if (err) return reject(err);
+				user.password = hash;
+				resolve(null);
+			});
+		});
+	});
+}
+
+userSchema.methods.validatePassword = function (candidatePassword: string) {
+	return new Promise((resolve, reject) => {
+		bcrypt.compare(candidatePassword, this.password, (error, isMatch) => {
+			if (error) return reject({ error });
+			resolve({ error: null, isMatch });
+		});
 	});
 };
 
-const User: Model<IUser> = model("user", userSchema);
+const User = model<IUserDocument>("user", userSchema);
 
 export default User;

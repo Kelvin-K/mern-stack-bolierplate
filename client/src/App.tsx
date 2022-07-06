@@ -8,6 +8,7 @@ import RouteWrapper from './wrapper/routeWrapper';
 const HomePage = lazy(() => import('./pages/homePage'));
 const NotFoundPage = lazy(() => import('./pages/notFoundPage'));
 const SignUpPage = lazy(() => import('./pages/signUpPage'));
+const LoginPage = lazy(() => import('./pages/loginPage'));
 
 export default class App extends Component {
 	render() {
@@ -20,6 +21,9 @@ export default class App extends Component {
 						</RouteWrapper>
 						<RouteWrapper path="/signup" routeType='publicOnly'>
 							<SignUpPage />
+						</RouteWrapper>
+						<RouteWrapper path="/login" routeType='publicOnly'>
+							<LoginPage />
 						</RouteWrapper>
 						<RouteWrapper path="/" standAlonePage={ true } routeType='common'>
 							<NotFoundPage />

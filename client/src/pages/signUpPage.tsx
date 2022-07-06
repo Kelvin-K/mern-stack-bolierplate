@@ -63,7 +63,6 @@ class SignUpPageComponent extends Component<RouteComponentProps, SignUpPageState
 		let hasErrors = false;
 
 		let setError = (property: string, value: string) => {
-			console.log(property, value);
 			errors = {
 				...errors,
 				[property]: value
@@ -110,43 +109,44 @@ class SignUpPageComponent extends Component<RouteComponentProps, SignUpPageState
 			this.setState({ errors: errors });
 		}
 		else {
-			const { confirmPassword, ...user } = fields;
-			this.createUser(user);
+			this.setState({
+				errors: new SignUpPageFields(),
+			}, () => {
+				const { confirmPassword, ...user } = fields;
+				this.createUser(user);
+			});
 		}
 	}
 
-	createUser = (user: any) => {
-		this.setState({
-			errors: new SignUpPageFields(),
-		}, async () => {
-			const response = await Fetch("/api/users", {
-				method: "POST",
-				body: JSON.stringify(user)
-			});
-			switch (response.status) {
-				case HttpStatusCodes.OK:
-					this.setState({
-						successMessage: "Account created successfully. We will redirect you shortly."
-					}, () => {
-						setTimeout(() => {
-							this.props.history.push("/login");
-						}, 2000);
-					});
-					break;
-				case HttpStatusCodes.CONFLICT:
-					const conflictedBody: string[] = await response.json();
-					this.setState({
-						fields: new SignUpPageFields(),
-						errorMessage: `User with this ${conflictedBody.join(" or ")} already exist.`
-					});
-					break;
-				default:
-					this.setState({
-						errorMessage: "An internal error occurred. Please contact system administrator."
-					});
-					break;
-			}
+	createUser = async (user: any) => {
+		const response = await Fetch("/api/users", {
+			method: "POST",
+			body: JSON.stringify(user)
 		});
+		switch (response.status) {
+			case HttpStatusCodes.OK:
+				this.setState({
+					errorMessage: "",
+					successMessage: "Account created successfully. We will redirect you shortly."
+				}, () => {
+					setTimeout(() => {
+						this.props.history.push("/login");
+					}, 2000);
+				});
+				break;
+			case HttpStatusCodes.CONFLICT:
+				const conflictedBody: string[] = await response.json();
+				this.setState({
+					fields: new SignUpPageFields(),
+					errorMessage: `User with this ${conflictedBody.join(" or ")} already exist.`
+				});
+				break;
+			default:
+				this.setState({
+					errorMessage: "An internal error occurred. Please contact system administrator."
+				});
+				break;
+		}
 	}
 
 	render() {
