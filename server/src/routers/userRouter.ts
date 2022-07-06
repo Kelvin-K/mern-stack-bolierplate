@@ -38,7 +38,7 @@ class UserRouter {
 		}
 		catch (error: any) {
 			if (error.code === "DUPLICATE_FIELD")
-				res.status(HttpStatusCodes.CONFLICT).send(error.errors);
+				res.status(HttpStatusCodes.CONFLICT).send(error.duplicateFields);
 			else
 				res.status(HttpStatusCodes.BAD_REQUEST).send(error);
 		}

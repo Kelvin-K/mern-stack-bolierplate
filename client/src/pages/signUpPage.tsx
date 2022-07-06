@@ -1,5 +1,6 @@
 import HttpStatusCodes from "http-status-codes";
 import { Component } from 'react';
+import { RouteComponentProps, withRouter } from "react-router-dom";
 import { validateContactNumber, validateEmail, validateFirstOrLastName, validatePassword, validateUsername } from "../common/validators";
 import { Fetch } from '../helpers/requestHelper';
 
@@ -16,11 +17,11 @@ class SignUpPageFields {
 class SignUpPageState {
 	fields: SignUpPageFields = new SignUpPageFields();
 	errors: SignUpPageFields = new SignUpPageFields();
-	errorMessage: string = "";
 	successMessage: string = "";
+	errorMessage: string = "";
 }
 
-export default class SignUpPage extends Component<{}, SignUpPageState> {
+class SignUpPageComponent extends Component<RouteComponentProps, SignUpPageState> {
 
 	constructor(props: any) {
 		super(props);
@@ -48,11 +49,8 @@ export default class SignUpPage extends Component<{}, SignUpPageState> {
 				<div className='label_holder'>
 					<label htmlFor={ property }>{ display }</label>
 				</div>
-				<input type={ type } id={ property } name={ property } value={ value } onChange={ this.handleChange } placeholder={ "Enter your " + display + " here" } />
-				{
-					error &&
-					<div className="error-msg">{ error }</div>
-				}
+				<input type={ type } id={ property } name={ property } value={ value } onChange={ this.handleChange } />
+				{ error && <div className="form_error">{ error }</div> }
 			</div>
 		);
 	}
@@ -128,21 +126,27 @@ export default class SignUpPage extends Component<{}, SignUpPageState> {
 			switch (response.status) {
 				case HttpStatusCodes.OK:
 					this.setState({
-						successMessage: "Account created successfully."
+						successMessage: "Account created successfully. We will redirect you shortly."
+					}, () => {
+						setTimeout(() => {
+							this.props.history.push("/login");
+						}, 2000);
 					});
 					break;
 				case HttpStatusCodes.CONFLICT:
+					const conflictedBody: string[] = await response.json();
 					this.setState({
-						errorMessage: "User with this username or email already exist."
+						fields: new SignUpPageFields(),
+						errorMessage: `User with this ${conflictedBody.join(" or ")} already exist.`
 					});
 					break;
 				default:
 					this.setState({
-						errorMessage: "An internal error occurred. Please contact administrator."
+						errorMessage: "An internal error occurred. Please contact system administrator."
 					});
 					break;
 			}
-		})
+		});
 	}
 
 	render() {
@@ -158,16 +162,13 @@ export default class SignUpPage extends Component<{}, SignUpPageState> {
 					{ this.getFormField("Email", "email", this.state.fields.email, this.state.errors.email, "email") }
 					{ this.getFormField("Contact Number", "contactNumber", this.state.fields.contactNumber, this.state.errors.contactNumber, "tel") }
 					<button type='submit' className='btn btn-primary'>Submit</button>
-					{
-						this.state.errorMessage &&
-						<div className="error_message">{ this.state.errorMessage }</div>
-					}
-					{
-						this.state.successMessage &&
-						<div className="success_message">{ this.state.successMessage }</div>
-					}
+					{ this.state.errorMessage && <div className="error_message">{ this.state.errorMessage }</div> }
+					{ this.state.successMessage && <div className="success_message">{ this.state.successMessage }</div> }
 				</form>
 			</div>
 		);
 	}
 }
+
+const SignUpPage = withRouter(SignUpPageComponent);
+export default SignUpPage;
