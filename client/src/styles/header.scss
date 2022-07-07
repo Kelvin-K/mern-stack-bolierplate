@@ -1,5 +1,6 @@
 header {
-	height: 50px;
+	height: 55px;
+	padding: 0px 20px;
 	background-color: black;
 	display: flex;
 	align-items: baseline;
@@ -23,7 +24,7 @@ header {
 	}
 
 	a {
-		height: 50px;
+		height: 100%;
 		line-height: 50px;
 		padding: 0px 10px;
 		text-decoration: none;
