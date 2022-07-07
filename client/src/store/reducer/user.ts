@@ -18,7 +18,9 @@ export const UserReducer: Reducer<UserState, UserAction> = (state: UserState = n
 	switch (action.type) {
 		case "USER_LOGGED_OUT":
 			{
-				return new UserState();
+				return {
+					...new UserState()
+				};
 			}
 		case "USER_AUTHENTICATED":
 			{

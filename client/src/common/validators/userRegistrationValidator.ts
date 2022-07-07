@@ -10,14 +10,14 @@ const userRegistrationValidator = Joi.object({
 			'string.empty': 'Username is required.',
 			'string.min': 'Username has to be at least 3 characters long.',
 			'string.max': 'Username should be max 30 characters long.',
-			'string.pattern.base': 'Username is not valid.'
+			'string.pattern.base': 'Username is invalid.'
 		}),
 	password: Joi.string()
 		.required()
 		.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/)
 		.messages({
 			'string.empty': 'Password is required.',
-			'string.pattern.base': 'Password is not valid.'
+			'string.pattern.base': 'Password is invalid.'
 		}),
 	confirmPassword: Joi.any()
 		.required()
@@ -30,19 +30,23 @@ const userRegistrationValidator = Joi.object({
 		.required()
 		.min(3)
 		.max(30)
+		.pattern(/^[a-z ,.'-]+$/i)
 		.messages({
 			'string.empty': 'First Name is required.',
 			'string.min': 'First Name has to be at least 3 characters long.',
 			'string.max': 'First Name should be max 30 characters long.',
+			'string.pattern.base': 'First Name is invalid.'
 		}),
 	lastName: Joi.string()
 		.required()
 		.min(3)
 		.max(30)
+		.pattern(/^[a-z ,.'-]+$/i)
 		.messages({
 			'string.empty': 'Last Name is required.',
 			'string.min': 'Last Name has to be at least 3 characters long.',
 			'string.max': 'Last Name should be max 30 characters long.',
+			'string.pattern.base': 'Last Name is invalid.'
 		}),
 	email: Joi.string()
 		.required()
@@ -50,13 +54,13 @@ const userRegistrationValidator = Joi.object({
 		.lowercase()
 		.messages({
 			'string.empty': 'Email is required.',
-			'string.email': 'Email is not valid',
+			'string.email': 'Email is invalid',
 		}),
 	contactNumber: Joi.string()
 		.pattern(/^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/)
 		.messages({
 			'string.empty': 'Email is required.',
-			'string.pattern.base': 'Contact number is not valid',
+			'string.pattern.base': 'Contact number is invalid',
 		}),
 });
 

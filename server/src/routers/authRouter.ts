@@ -45,14 +45,11 @@ class AuthRouter {
 			if (!user) throw new createError.NotFound("User is not registered.");
 
 			const isMatch = await user.isValidPassword(password);
-			if (!isMatch) throw new createError.Unauthorized("Username and Password combination is not valid.");
+			if (!isMatch) throw new createError.Unauthorized("Username and Password combination is invalid.");
 
 			const accessToken = await signAccessToken(user.id);
 			const refreshToken = await signRefreshToken(user.id);
-
-			await RedisHelper.client.set(user.id, refreshToken, {
-				EX: 365 * 24 * 60 * 60
-			});
+			await RedisHelper.client.set(user.id, refreshToken, { EX: 365 * 24 * 60 * 60 });
 
 			res.cookie("refreshToken", refreshToken, { httpOnly: true }).send({ accessToken });
 		}
@@ -76,10 +73,7 @@ class AuthRouter {
 
 			const accessToken = await signAccessToken(payload.aud);
 			const newRefToken = await signRefreshToken(payload.aud);
-
-			await RedisHelper.client.set(payload.aud, newRefToken, {
-				EX: 365 * 24 * 60 * 60
-			});
+			await RedisHelper.client.set(payload.aud, newRefToken, { EX: 365 * 24 * 60 * 60 });
 
 			res.cookie("refreshToken", newRefToken, { httpOnly: true }).send({ accessToken });
 		}
@@ -94,7 +88,6 @@ class AuthRouter {
 			if (!refreshToken) throw new createError.BadRequest();
 
 			const payload = await verifyRefreshToken(refreshToken);
-
 			await RedisHelper.client.del(payload.aud);
 
 			res.clearCookie("refreshToken").send({ message: "Logged out successfully." });

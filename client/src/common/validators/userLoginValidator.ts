@@ -10,14 +10,14 @@ const userLoginValidator = Joi.object({
 			'string.empty': 'Username is required.',
 			'string.min': 'Username has to be at least 3 characters long.',
 			'string.max': 'Username should be max 30 characters long.',
-			'string.pattern.base': 'Username is not valid.'
+			'string.pattern.base': 'Username is invalid.'
 		}),
 	password: Joi.string()
 		.required()
 		.pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,16}$/)
 		.messages({
 			'string.empty': 'Password is required.',
-			'string.pattern.base': 'Password is not valid.'
+			'string.pattern.base': 'Password is invalid.'
 		}),
 });
 
