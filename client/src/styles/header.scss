@@ -2,6 +2,9 @@ header {
 	height: 50px;
 	background-color: black;
 	display: flex;
+	position: sticky;
+	position: -webkit-sticky;
+	top: 0;
 
 	section {
 		display: flex;

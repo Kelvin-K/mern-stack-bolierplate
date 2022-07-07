@@ -39,7 +39,7 @@ export class HeaderComponent extends Component<StateProps & DispatchProps, any> 
 							this.props.isAuthenticated
 								? (
 									<>
-										<a href="#" onClick={ this.handleLogout }>Logout</a>
+										<a href="/logout" onClick={ this.handleLogout }>Logout</a>
 									</>
 								)
 								: (

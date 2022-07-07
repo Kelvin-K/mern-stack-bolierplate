@@ -1,5 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from "express";
 import createError from "http-errors";
+import userLoginSchema from "../common/validators/userLoginValidator";
+import userRegistrationSchema from "../common/validators/userRegistrationValidator";
 import User from "../db/user";
 import RedisHelper from "../helper/redisHelper";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from './../helper/jwtHelper';
@@ -16,16 +18,17 @@ class AuthRouter {
 
 	registerUser = async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const user = new User(req.body);
-			const validationError = user.validateSync();
+			const { error, value: validatedUser } = userRegistrationSchema.validate(req.body);
+			if (error) throw new createError.UnprocessableEntity(error.message);
 
-			if (validationError) throw new createError.UnprocessableEntity(JSON.stringify(validationError));
+			const { confirmPassword, ...userDetails } = validatedUser;
+			const user = new User(userDetails);
 			if (await User.findOne({ username: user.username })) throw new createError.Conflict(`Username is already in use!`);
 			if (await User.findOne({ email: user.email })) throw new createError.Conflict(`Email is already registered!`);
 
 			await user.save();
 
-			res.send("User created successfully.")
+			res.send({ message: "User created successfully." });
 		}
 		catch (error) {
 			next(error);
@@ -34,16 +37,15 @@ class AuthRouter {
 
 	login = async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const { username, password } = req.body;
+			const { error, value: validatedUser } = userLoginSchema.validate(req.body);
+			if (error) throw new createError.UnprocessableEntity(error.message);
 
-			if (!username) throw new createError.BadRequest("Username is required!");
-			if (!password) throw new createError.BadRequest("Password is required!");
-
+			const { username, password } = validatedUser;
 			const user = await User.findOne({ username });
-			if (!user) throw new createError.NotFound("User not registered.");
+			if (!user) throw new createError.NotFound("User is not registered.");
 
 			const isMatch = await user.isValidPassword(password);
-			if (!isMatch) throw new createError.Unauthorized("Username/Password not valid.");
+			if (!isMatch) throw new createError.Unauthorized("Username and Password combination is not valid.");
 
 			const accessToken = await signAccessToken(user.id);
 			const refreshToken = await signRefreshToken(user.id);
@@ -95,7 +97,7 @@ class AuthRouter {
 
 			await RedisHelper.client.del(payload.aud);
 
-			res.clearCookie("refreshToken").send("Logged out successfully!");
+			res.clearCookie("refreshToken").send({ message: "Logged out successfully!" });
 		}
 		catch (error) {
 			next(error);

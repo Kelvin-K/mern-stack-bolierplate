@@ -2,6 +2,7 @@ import HttpStatusCodes from "http-status-codes";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
+import userLoginSchema from "../common/validators/userLoginValidator";
 import { authenticationDetails, POST } from '../helpers/requestHelper';
 import { StoreDispatch, StoreState } from '../store/store';
 
@@ -16,7 +17,6 @@ class LoginPageFields {
 
 class LoginPageState {
 	fields: LoginPageFields = new LoginPageFields();
-	errors: LoginPageFields = new LoginPageFields();
 	successMessage: string = "";
 	errorMessage: string = "";
 }
@@ -30,28 +30,24 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 	}
 
 	handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
-		const property = ev.currentTarget.name;
-		const value = ev.currentTarget.value;
-
 		this.setState(state => {
 			return {
 				...state,
 				fields: {
 					...state.fields,
-					[property]: value
+					[ev.currentTarget.name]: ev.currentTarget.value
 				}
 			};
 		})
 	}
 
-	getFormField = (display: string, property: string, value: string, error: string, type: string = "text") => {
+	getFormField = (display: string, property: string, value: string, type: string = "text") => {
 		return (
 			<div className="formGroup">
 				<div className='label_holder'>
 					<label htmlFor={ property }>{ display }</label>
 				</div>
 				<input type={ type } id={ property } name={ property } value={ value } onChange={ this.handleChange } />
-				{ error && <div className="form_error">{ error }</div> }
 			</div>
 		);
 	}
@@ -59,83 +55,36 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 	submitChange = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		const fields = this.state.fields;
-		let errors = new LoginPageFields();
-		let hasErrors = false;
+		const { error, value: validatedUser } = userLoginSchema.validate(this.state.fields);
+		if (error) return this.setState({ errorMessage: error.message });
 
-		let setError = (property: string, value: string) => {
-			console.log(property, value);
-			errors = {
-				...errors,
-				[property]: value
-			};
-			hasErrors = true;
-		};
-
-		if (!fields.username)
-			setError("username", "Username is required!");
-
-		if (!fields.password)
-			setError("password", "Password is required!");
-
-		if (hasErrors) {
-			this.setState({ errors: errors });
-		}
-		else {
-			this.setState({
-				errors: new LoginPageFields(),
-			}, () => {
-				this.authenticateUser(this.state.fields);
-			});
-		}
+		this.setState({ errorMessage: "", }, async () => {
+			await this.login(validatedUser);
+		});
 	}
 
-	authenticateUser = async (loginDetails: any) => {
+	login = async (loginDetails: any) => {
 		const response = await POST("/api/login", loginDetails);
+		const body = await response.json();
+
 		switch (response.status) {
 			case HttpStatusCodes.OK:
-				{
-					this.setState({
-						errorMessage: "",
-						successMessage: "Login successfully. We will redirect you shortly."
-					},
-						() => {
-							setTimeout(async () => {
-								const { accessToken } = await response.json();
-								authenticationDetails.accessToken = accessToken;
-								this.props.userAuthenticated();
-								this.props.history.push("/");
-							}, 2000);
-						});
-				}
-				break;
+				return this.setState({ errorMessage: "", successMessage: "Login successfully. We will redirect you shortly." },
+					() => setTimeout(() => {
+						authenticationDetails.accessToken = body.accessToken;
+						this.props.userAuthenticated();
+						this.props.history.push("/");
+					}, 2000)
+				);
 			case HttpStatusCodes.NOT_FOUND:
-				{
-					this.setState(previousState => ({
-						...new LoginPageState(),
-						fields: previousState.fields,
-						errorMessage: "User is not registered. Maybe you want to sign up instead?"
-					}));
-				}
-				break;
 			case HttpStatusCodes.UNAUTHORIZED:
-				{
-					this.setState(previousState => ({
-						...new LoginPageState(),
-						fields: previousState.fields,
-						errorMessage: "Username/Password not valid."
-					}));
-				}
-				break;
+				return this.setState({
+					errorMessage: body.error.message
+				});
 			default:
-				{
-					this.setState(previousState => ({
-						...new LoginPageState(),
-						fields: previousState.fields,
-						errorMessage: "Please contact your administrator."
-					}));
-				}
-				break;
+				return this.setState(({
+					errorMessage: "An internal error occurred. Please contact system administrator."
+				}));
 		}
 	}
 
@@ -144,8 +93,8 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 			<div className="center_form_container">
 				<form onSubmit={ this.submitChange }>
 					<h1 className="form_header">Log In</h1>
-					{ this.getFormField("Username", "username", this.state.fields.username, this.state.errors.username) }
-					{ this.getFormField("Password", "password", this.state.fields.password, this.state.errors.password, "password") }
+					{ this.getFormField("Username", "username", this.state.fields.username) }
+					{ this.getFormField("Password", "password", this.state.fields.password, "password") }
 					<button type='submit' className='btn btn-primary'>Submit</button>
 					{ this.state.errorMessage && <div className="error_message">{ this.state.errorMessage }</div> }
 					{ this.state.successMessage && <div className="success_message">{ this.state.successMessage }</div> }
