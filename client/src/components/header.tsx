@@ -31,8 +31,7 @@ export class HeaderComponent extends Component<StateProps & DispatchProps, any> 
 				<Link to="/" className='brand_name'>Mern Stack Boilerplate</Link>
 				<section>
 					<nav>
-						<Link to="/features">Features</Link>
-						<Link to="/pricing">Pricing</Link>
+						<Link to="/invalid-page">Invalid Page</Link>
 					</nav>
 					<nav>
 						{

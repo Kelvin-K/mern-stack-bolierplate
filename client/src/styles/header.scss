@@ -2,6 +2,7 @@ header {
 	height: 50px;
 	background-color: black;
 	display: flex;
+	align-items: baseline;
 	position: sticky;
 	position: -webkit-sticky;
 	top: 0;
@@ -10,6 +11,15 @@ header {
 		display: flex;
 		justify-content: space-between;
 		flex-grow: 1;
+	}
+
+	.brand_name {
+		font-size: 1.2rem;
+
+		&:hover {
+			color: black;
+			background-color: gray;
+		}
 	}
 
 	a {
@@ -22,10 +32,5 @@ header {
 		&:hover {
 			color: gray;
 		}
-	}
-
-	.brand_name:hover {
-		color: black;
-		background-color: gray;
 	}
 }
