@@ -4,14 +4,21 @@
 		"version": "1.0.0",
 		"title": "Mern Stack Boilerplate"
 	},
+	"securityDefinitions": {
+		"Bearer": {
+			"type": "apiKey",
+			"name": "Authorization",
+			"in": "header"
+		}
+	},
 	"tags": [
 		{
 			"name": "Health",
 			"description": "API for system health"
 		},
 		{
-			"name": "Users",
-			"description": "API for users in the system"
+			"name": "Auth",
+			"description": "API for authentication in the system"
 		}
 	],
 	"consumes": [
@@ -35,24 +42,10 @@
 				}
 			}
 		},
-		"/api/users": {
-			"get": {
-				"tags": [
-					"Users"
-				],
-				"summary": "Get all users in system",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"schema": {
-							"$ref": "#/definitions/Users"
-						}
-					}
-				}
-			},
+		"/api/register": {
 			"post": {
 				"tags": [
-					"Users"
+					"Auth"
 				],
 				"summary": "Create new user in system",
 				"parameters": [
@@ -79,85 +72,50 @@
 				}
 			}
 		},
-		"/api/users/{id}": {
-			"get": {
+		"api/login": {
+			"post": {
 				"tags": [
-					"Users"
+					"Auth"
 				],
-				"summary": "Get specific user in system",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"schema": {
-							"$ref": "#/definitions/Users"
-						}
-					}
-				},
+				"summary": "Authenticate user",
 				"parameters": [
 					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"description": "Id of the user",
-						"type": "string"
-					}
-				]
-			},
-			"patch": {
-				"tags": [
-					"Users"
-				],
-				"summary": "Update user",
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"description": "Id of the user",
-						"type": "string"
-					},
-					{
-						"name": "user",
+						"name": "authentication info",
 						"in": "body",
-						"description": "User that we want to create",
+						"description": "login details",
 						"required": true,
 						"schema": {
-							"$ref": "#/definitions/User"
+							"$ref": "#/definitions/LoginDetails"
 						}
 					}
 				],
+				"produces": [
+					"application/json"
+				],
 				"responses": {
 					"200": {
-						"description": "User is updated",
-						"schema": {
-							"$ref": "#/definitions/User"
-						}
+						"description": "New user is created",
+						"type": "string"
 					}
 				}
-			},
-			"delete": {
-				"tags": [
-					"Users"
-				],
-				"summary": "Get specific user in system",
-				"responses": {
-					"200": {
-						"description": "OK"
-					}
-				},
-				"parameters": [
-					{
-						"name": "id",
-						"in": "path",
-						"required": true,
-						"description": "Id of the user",
-						"type": "string"
-					}
-				]
 			}
 		}
 	},
 	"definitions": {
+		"LoginDetails": {
+			"required": [
+				"username",
+				"password"
+			],
+			"properties": {
+				"username": {
+					"type": "string"
+				},
+				"password": {
+					"type": "string"
+				}
+			}
+		},
 		"User": {
 			"required": [
 				"email",

@@ -59,10 +59,10 @@ class ExpressServer {
 		});
 	}
 
-	start = async (port: any, databaseUrl: string) => {
+	start = async (port: any, mongoDBUrl: string, redisUrl: string, redisPassword: string) => {
 		try {
-			await MongoHelper.connect(databaseUrl);
-			await RedisHelper.connect("redis://localhost:6379", "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81");
+			await MongoHelper.connect(mongoDBUrl);
+			await RedisHelper.connect(redisUrl, redisPassword);
 			this.app.listen(port, () => console.log(`Server started listening at http://localhost:${port}/\nAccess API documentation by http://localhost:${port}/api-docs`));
 		}
 		catch (error) {
