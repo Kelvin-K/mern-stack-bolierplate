@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-const userLoginSchema = Joi.object({
+const userLoginValidator = Joi.object({
 	username: Joi.string()
 		.required()
 		.min(3)
@@ -21,4 +21,4 @@ const userLoginSchema = Joi.object({
 		}),
 });
 
-export default userLoginSchema;
+export default userLoginValidator;

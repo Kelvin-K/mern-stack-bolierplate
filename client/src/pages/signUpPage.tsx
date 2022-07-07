@@ -1,7 +1,7 @@
 import HttpStatusCodes from "http-status-codes";
 import { Component } from 'react';
 import { RouteComponentProps, withRouter } from "react-router-dom";
-import userRegistrationSchema from "../common/validators/userRegistrationValidator";
+import userRegistrationValidator from "../common/validators/userRegistrationValidator";
 import { POST } from '../helpers/requestHelper';
 
 class SignUpPageFields {
@@ -28,12 +28,15 @@ class SignUpPageComponent extends Component<RouteComponentProps, SignUpPageState
 	}
 
 	handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+		const property = ev.currentTarget.name;
+		const value = ev.currentTarget.value;
+
 		this.setState(state => {
 			return {
 				...state,
 				fields: {
 					...state.fields,
-					[ev.currentTarget.name]: ev.currentTarget.value
+					[property]: value
 				}
 			};
 		})
@@ -53,7 +56,7 @@ class SignUpPageComponent extends Component<RouteComponentProps, SignUpPageState
 	submitChange = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		const { error, value: validatedUser } = userRegistrationSchema.validate(this.state.fields);
+		const { error, value: validatedUser } = userRegistrationValidator.validate(this.state.fields);
 		if (error) return this.setState({ errorMessage: error.message });
 
 		this.setState({ errorMessage: "" }, async () => {

@@ -1,6 +1,6 @@
 import Joi from "joi";
 
-const userRegistrationSchema = Joi.object({
+const userRegistrationValidator = Joi.object({
 	username: Joi.string()
 		.required()
 		.min(3)
@@ -60,4 +60,4 @@ const userRegistrationSchema = Joi.object({
 		}),
 });
 
-export default userRegistrationSchema;
+export default userRegistrationValidator;

@@ -2,7 +2,7 @@ import HttpStatusCodes from "http-status-codes";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import userLoginSchema from "../common/validators/userLoginValidator";
+import userLoginValidator from "../common/validators/userLoginValidator";
 import { authenticationDetails, POST } from '../helpers/requestHelper';
 import { StoreDispatch, StoreState } from '../store/store';
 
@@ -30,12 +30,15 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 	}
 
 	handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+		const property = ev.currentTarget.name;
+		const value = ev.currentTarget.value;
+
 		this.setState(state => {
 			return {
 				...state,
 				fields: {
 					...state.fields,
-					[ev.currentTarget.name]: ev.currentTarget.value
+					[property]: value
 				}
 			};
 		})
@@ -55,7 +58,7 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 	submitChange = (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		const { error, value: validatedUser } = userLoginSchema.validate(this.state.fields);
+		const { error, value: validatedUser } = userLoginValidator.validate(this.state.fields);
 		if (error) return this.setState({ errorMessage: error.message });
 
 		this.setState({ errorMessage: "", }, async () => {

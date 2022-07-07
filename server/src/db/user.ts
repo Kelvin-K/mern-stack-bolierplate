@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import { Document, model, Schema } from "mongoose";
-import { validateContactNumber, validateEmail, validateFirstOrLastName, validatePassword, validateUsername } from "../common/validators";
 
 const SALT_WORK_FACTOR = 10;
 
@@ -27,51 +26,27 @@ var userSchema = new Schema<IUserDocument>({
 		type: String,
 		required: true,
 		unique: true,
-		lowercase: true,
-		validate: {
-			validator: validateEmail,
-			message: () => `Invalid email address!`
-		}
+		lowercase: true
 	},
 	username: {
 		type: String,
 		required: true,
-		unique: true,
-		validate: {
-			validator: validateUsername,
-			message: (props: any) => `${props.value} does not fall within valid username criteria!`
-		}
+		unique: true
 	},
 	password: {
 		type: String,
-		required: true,
-		validate: {
-			validator: validatePassword,
-			message: () => `Password does not fall within accepted criteria!`
-		}
+		required: true
 	},
 	firstName: {
 		type: String,
-		required: true,
-		validate: {
-			validator: validateFirstOrLastName,
-			message: (props: any) => `${props.value} is not a valid first name!`
-		}
+		required: true
 	},
 	lastName: {
 		type: String,
-		required: true,
-		validate: {
-			validator: validateFirstOrLastName,
-			message: (props: any) => `${props.value} is not a valid last name!`
-		}
+		required: true
 	},
 	contactNumber: {
-		type: String,
-		validate: {
-			validator: validateContactNumber,
-			message: (props: any) => `${props.value} is not a valid phone last name!`
-		}
+		type: String
 	}
 });
 

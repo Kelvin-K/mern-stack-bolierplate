@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response, Router } from "express";
 import createError from "http-errors";
-import userLoginSchema from "../common/validators/userLoginValidator";
-import userRegistrationSchema from "../common/validators/userRegistrationValidator";
+import userLoginValidator from "../common/validators/userLoginValidator";
+import userRegistrationValidator from "../common/validators/userRegistrationValidator";
 import User from "../db/user";
 import RedisHelper from "../helper/redisHelper";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from './../helper/jwtHelper';
@@ -18,13 +18,13 @@ class AuthRouter {
 
 	registerUser = async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const { error, value: validatedUser } = userRegistrationSchema.validate(req.body);
+			const { error, value: validatedUser } = userRegistrationValidator.validate(req.body);
 			if (error) throw new createError.UnprocessableEntity(error.message);
 
 			const { confirmPassword, ...userDetails } = validatedUser;
 			const user = new User(userDetails);
-			if (await User.findOne({ username: user.username })) throw new createError.Conflict(`Username is already in use!`);
-			if (await User.findOne({ email: user.email })) throw new createError.Conflict(`Email is already registered!`);
+			if (await User.findOne({ username: user.username })) throw new createError.Conflict("Username is already in use.");
+			if (await User.findOne({ email: user.email })) throw new createError.Conflict("Email is already registered.");
 
 			await user.save();
 
@@ -37,7 +37,7 @@ class AuthRouter {
 
 	login = async (req: Request, res: Response, next: NextFunction) => {
 		try {
-			const { error, value: validatedUser } = userLoginSchema.validate(req.body);
+			const { error, value: validatedUser } = userLoginValidator.validate(req.body);
 			if (error) throw new createError.UnprocessableEntity(error.message);
 
 			const { username, password } = validatedUser;
@@ -97,7 +97,7 @@ class AuthRouter {
 
 			await RedisHelper.client.del(payload.aud);
 
-			res.clearCookie("refreshToken").send({ message: "Logged out successfully!" });
+			res.clearCookie("refreshToken").send({ message: "Logged out successfully." });
 		}
 		catch (error) {
 			next(error);
