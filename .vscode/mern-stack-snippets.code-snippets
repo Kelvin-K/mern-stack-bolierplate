@@ -228,7 +228,7 @@
 			"",
 			"export default $1;",
 		]
-	}
+	},
 	"express middleware": {
 		"prefix": "middleware",
 		"body": [
@@ -261,8 +261,8 @@
 			"export default $1;",
 		]
 	},
-	"express request": {
-		"prefix": "request",
+	"express request Half": {
+		"prefix": "requestHalf",
 		"body": [
 			"$1 = (req: Request, res: Response) => {",
 			"\t$2",
@@ -270,8 +270,8 @@
 		],
 		"scope": "typescript"
 	},
-	"express request Full": {
-		"prefix": "requestFull",
+	"express request": {
+		"prefix": "request",
 		"body": [
 			"$1 = (req: Request, res: Response, next: NextFunction) => {",
 			"\t$2",

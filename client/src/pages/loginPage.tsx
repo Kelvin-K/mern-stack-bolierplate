@@ -2,11 +2,11 @@ import HttpStatusCodes from "http-status-codes";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
-import { authenticationDetails, Fetch } from '../helpers/requestHelper';
+import { authenticationDetails, POST } from '../helpers/requestHelper';
 import { StoreDispatch, StoreState } from '../store/store';
 
 interface DispatchProps {
-	userAuthenticated: (username: string, firstName: string, lastName: string, email: string, contactNumber: string) => void;
+	userAuthenticated: () => void;
 }
 
 class LoginPageFields {
@@ -91,29 +91,50 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 	}
 
 	authenticateUser = async (loginDetails: any) => {
-		const response = await Fetch("/api/authenticate", {
-			method: "POST",
-			body: JSON.stringify(loginDetails)
-		});
+		const response = await POST("/api/login", loginDetails);
 		switch (response.status) {
 			case HttpStatusCodes.OK:
-				this.setState({
-					errorMessage: "",
-					successMessage: "Login successfully. We will redirect you shortly."
-				}, () => {
-					setTimeout(async () => {
-						const body = await response.json();
-						authenticationDetails.authToken = body.authToken;
-						const { firstName, lastName, email, contactNumber } = body;
-						this.props.userAuthenticated(this.state.fields.username, firstName, lastName, email, contactNumber);
-						this.props.history.push("/");
-					}, 2000);
-				});
+				{
+					this.setState({
+						errorMessage: "",
+						successMessage: "Login successfully. We will redirect you shortly."
+					},
+						() => {
+							setTimeout(async () => {
+								const { accessToken } = await response.json();
+								authenticationDetails.accessToken = accessToken;
+								this.props.userAuthenticated();
+								this.props.history.push("/");
+							}, 2000);
+						});
+				}
+				break;
+			case HttpStatusCodes.NOT_FOUND:
+				{
+					this.setState(previousState => ({
+						...new LoginPageState(),
+						fields: previousState.fields,
+						errorMessage: "User is not registered. Maybe you want to sign up instead?"
+					}));
+				}
+				break;
+			case HttpStatusCodes.UNAUTHORIZED:
+				{
+					this.setState(previousState => ({
+						...new LoginPageState(),
+						fields: previousState.fields,
+						errorMessage: "Username/Password not valid."
+					}));
+				}
 				break;
 			default:
-				this.setState({
-					errorMessage: "Invalid username or password"
-				});
+				{
+					this.setState(previousState => ({
+						...new LoginPageState(),
+						fields: previousState.fields,
+						errorMessage: "Please contact your administrator."
+					}));
+				}
 				break;
 		}
 	}
@@ -142,7 +163,7 @@ function connectStateToProps(state: StoreState, ownProps: any): RouteComponentPr
 
 function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps {
 	return {
-		userAuthenticated: (username: string, firstName: string, lastName: string, email: string, contactNumber: string) => dispatch({ type: "USER_AUTHENTICATED", username, firstName, lastName, email, contactNumber })
+		userAuthenticated: () => dispatch({ type: "USER_AUTHENTICATED" })
 	}
 }
 

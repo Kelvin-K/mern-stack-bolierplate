@@ -2,7 +2,7 @@ import HttpStatusCodes from "http-status-codes";
 import { Component } from 'react';
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import { validateContactNumber, validateEmail, validateFirstOrLastName, validatePassword, validateUsername } from "../common/validators";
-import { Fetch } from '../helpers/requestHelper';
+import { POST } from '../helpers/requestHelper';
 
 class SignUpPageFields {
 	username: string = "";
@@ -63,10 +63,7 @@ class SignUpPageComponent extends Component<RouteComponentProps, SignUpPageState
 		let hasErrors = false;
 
 		let setError = (property: string, value: string) => {
-			errors = {
-				...errors,
-				[property]: value
-			};
+			errors = { ...errors, [property]: value };
 			hasErrors = true;
 		};
 
@@ -111,40 +108,60 @@ class SignUpPageComponent extends Component<RouteComponentProps, SignUpPageState
 		else {
 			this.setState({
 				errors: new SignUpPageFields(),
-			}, () => {
-				const { confirmPassword, ...user } = fields;
-				this.createUser(user);
-			});
+			},
+				async () => {
+					const { confirmPassword, ...user } = fields;
+					await this.createUser(user);
+				});
 		}
 	}
 
 	createUser = async (user: any) => {
-		const response = await Fetch("/api/users", {
-			method: "POST",
-			body: JSON.stringify(user)
-		});
+		const response = await POST("/api/register", user);
+		const body = await response.json();
+
 		switch (response.status) {
 			case HttpStatusCodes.OK:
-				this.setState({
-					errorMessage: "",
-					successMessage: "Account created successfully. We will redirect you shortly."
-				}, () => {
-					setTimeout(() => {
-						this.props.history.push("/login");
-					}, 2000);
-				});
+				{
+					this.setState({
+						errorMessage: "",
+						successMessage: "Account created successfully. We will redirect you shortly."
+					}, () => {
+						setTimeout(() => {
+							this.props.history.push("/login");
+						}, 2000);
+					});
+				}
+				break;
+			case HttpStatusCodes.UNPROCESSABLE_ENTITY:
+				{
+					let errors = new SignUpPageFields();
+					let serverErrors = JSON.parse(body.message);
+					for (const key in serverErrors.errors) {
+						errors = {
+							...errors,
+							[key]: serverErrors.errors[key].message
+						}
+					}
+					this.setState({ errors: errors, errorMessage: "", successMessage: "" });
+				}
 				break;
 			case HttpStatusCodes.CONFLICT:
-				const conflictedBody: string[] = await response.json();
-				this.setState({
-					fields: new SignUpPageFields(),
-					errorMessage: `User with this ${conflictedBody.join(" or ")} already exist.`
-				});
+				{
+					this.setState({
+						fields: new SignUpPageFields(),
+						errorMessage: body.message,
+						successMessage: ""
+					});
+				}
 				break;
 			default:
-				this.setState({
-					errorMessage: "An internal error occurred. Please contact system administrator."
-				});
+				{
+					this.setState({
+						errorMessage: "An internal error occurred. Please contact system administrator.",
+						successMessage: ""
+					});
+				}
 				break;
 		}
 	}

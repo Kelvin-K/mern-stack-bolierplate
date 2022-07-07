@@ -4,6 +4,7 @@ import { BrowserRouter, Switch } from 'react-router-dom';
 import store from './store/store';
 import "./styles/app.scss";
 import RouteWrapper from './wrapper/routeWrapper';
+import ServerHelper from './wrapper/serverHelper';
 
 const HomePage = lazy(() => import('./pages/homePage'));
 const NotFoundPage = lazy(() => import('./pages/notFoundPage'));
@@ -15,20 +16,22 @@ export default class App extends Component {
 		return (
 			<BrowserRouter>
 				<Provider store={ store }>
-					<Switch>
-						<RouteWrapper exact path="/" routeType='common'>
-							<HomePage />
-						</RouteWrapper>
-						<RouteWrapper path="/signup" routeType='publicOnly'>
-							<SignUpPage />
-						</RouteWrapper>
-						<RouteWrapper path="/login" routeType='publicOnly'>
-							<LoginPage />
-						</RouteWrapper>
-						<RouteWrapper path="/" standAlonePage={ true } routeType='common'>
-							<NotFoundPage />
-						</RouteWrapper>
-					</Switch>
+					<ServerHelper>
+						<Switch>
+							<RouteWrapper exact path="/" routeType='common'>
+								<HomePage />
+							</RouteWrapper>
+							<RouteWrapper path="/signup" routeType='publicOnly'>
+								<SignUpPage />
+							</RouteWrapper>
+							<RouteWrapper path="/login" routeType='publicOnly'>
+								<LoginPage />
+							</RouteWrapper>
+							<RouteWrapper path="/" standAlonePage={ true } routeType='common'>
+								<NotFoundPage />
+							</RouteWrapper>
+						</Switch>
+					</ServerHelper>
 				</Provider>
 			</BrowserRouter>
 		);

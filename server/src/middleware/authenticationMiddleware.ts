@@ -1,32 +1,21 @@
 import { NextFunction, Request, Response } from 'express';
-import HttpStatusCodes from 'http-status-codes';
-import User from '../db/user';
-import { parseAuthToken } from './../helper/authenticationHelper';
+import createError from 'http-errors';
+import { verifyAccessToken } from './../helper/jwtHelper';
 
 const AuthenticationMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-	const authHeader: any = req.headers['auth'];
-	if (!authHeader) {
-		res.status(HttpStatusCodes.BAD_REQUEST).send({ message: "Invalid request" });
-		return;
+	try {
+		const authHeader = req.headers["authorization"];
+		if (!authHeader) return next(new createError.Unauthorized());
+
+		const bearerToken = authHeader.split(" ");
+		const token = bearerToken[1];
+
+		req.payload = await verifyAccessToken(token);
+		next();
 	}
-	const [protocol, token] = authHeader.split(" ");
-	if (protocol != "Bearer" || !token) {
-		res.status(HttpStatusCodes.BAD_REQUEST).send({ message: "Invalid request" });
-		return;
+	catch (error) {
+		next(error);
 	}
-	const tokenDetails = parseAuthToken(token);
-	if (!tokenDetails || !tokenDetails.id || !tokenDetails.iat) {
-		res.status(HttpStatusCodes.BAD_REQUEST).send({ message: "Invalid request" });
-		return;
-	}
-	const tokenDuration = Math.ceil((tokenDetails.iat - Date.now()) / (1000 * 60 * 60 * 24));
-	if (tokenDuration > 1) {
-		res.status(HttpStatusCodes.UNAUTHORIZED).send({ message: "session expired" });
-		return;
-	}
-	const user = await User.findById(tokenDetails.id);
-	(req as any).user = user;
-	next();
 }
 
 export default AuthenticationMiddleware;

@@ -14,9 +14,8 @@ interface IUser {
 }
 
 export interface IUserDocument extends IUser, Document {
-	refreshToken: string;
-	setPassword: (password: string) => Promise<void>;
-	validatePassword: (candidatePassword: string) => Promise<{ error: Error | null, isMatch?: boolean }>;
+	setPassword: (password: string) => void;
+	isValidPassword: (password: string) => boolean;
 }
 
 var userSchema = new Schema<IUserDocument>({
@@ -27,9 +26,8 @@ var userSchema = new Schema<IUserDocument>({
 	email: {
 		type: String,
 		required: true,
-		index: {
-			unique: true,
-		},
+		unique: true,
+		lowercase: true,
 		validate: {
 			validator: validateEmail,
 			message: () => `Invalid email address!`
@@ -38,9 +36,7 @@ var userSchema = new Schema<IUserDocument>({
 	username: {
 		type: String,
 		required: true,
-		index: {
-			unique: true
-		},
+		unique: true,
 		validate: {
 			validator: validateUsername,
 			message: (props: any) => `${props.value} does not fall within valid username criteria!`
@@ -76,69 +72,33 @@ var userSchema = new Schema<IUserDocument>({
 			validator: validateContactNumber,
 			message: (props: any) => `${props.value} is not a valid phone last name!`
 		}
-	},
-	refreshToken: {
-		type: String
 	}
 });
 
-userSchema.pre<IUserDocument>('save', function (next: any) {
-	let user = this;
-
-	if (user.email)
-		user.email = user.email.toLowerCase();
-
-	console.log("user modified:", user.isModified('password'));
-
-	if (!user.isModified('password'))
-		return next();
-
-	bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
-		if (err) return next(err);
-		bcrypt.hash(user.password, salt, function (err, hash) {
-			if (err) return next(err);
-			user.password = hash;
-			next();
-		});
-	});
-});
-
-userSchema.post<IUserDocument>('save', function (error: any, res: any, next: any) {
-	if (error.name === "MongoServerError" && error.code === 11000) {
-		let duplicateFields: any[] = [];
-		for (const key in error.keyValue) {
-			duplicateFields.push(key);
-		}
-		next({
-			code: "DUPLICATE_FIELD",
-			duplicateFields: duplicateFields
-		});
+userSchema.pre<IUserDocument>('save', async function (next: any) {
+	try {
+		const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+		const hashedPassword = await bcrypt.hash(this.password, salt)
+		this.password = hashedPassword;
+		next()
 	}
-	else
+	catch (error) {
 		next(error);
+	}
 });
 
-userSchema.methods.setPassword = function (candidatePassword: string) {
-	return new Promise((resolve, reject) => {
-		const user = this;
-		bcrypt.genSalt(SALT_WORK_FACTOR, function (err, salt) {
-			if (err) return reject(err);
-			bcrypt.hash(user.password, salt, function (err, hash) {
-				if (err) return reject(err);
-				user.password = hash;
-				resolve(null);
-			});
-		});
-	});
+userSchema.methods.setPassword = async function (password: string) {
+	const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+	const hashedPassword = await bcrypt.hash(password, salt)
+	this.password = hashedPassword;
 }
 
-userSchema.methods.validatePassword = function (candidatePassword: string) {
-	return new Promise((resolve, reject) => {
-		bcrypt.compare(candidatePassword, this.password, (error, isMatch) => {
-			if (error) return reject({ error });
-			resolve({ error: null, isMatch });
-		});
-	});
+userSchema.methods.isValidPassword = async function (password: string) {
+	try {
+		return await bcrypt.compare(password, this.password)
+	} catch (error) {
+		throw error;
+	}
 };
 
 const User = model<IUserDocument>("user", userSchema);

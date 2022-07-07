@@ -2,7 +2,7 @@ import HttpStatusCodes from 'http-status-codes';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import { authenticationDetails, Fetch } from '../helpers/requestHelper';
+import { authenticationDetails, DELETE } from '../helpers/requestHelper';
 import { StoreDispatch, StoreState } from '../store/store';
 import "../styles/header.scss";
 
@@ -18,10 +18,9 @@ export class HeaderComponent extends Component<StateProps & DispatchProps, any> 
 
 	handleLogout = async (ev: React.MouseEvent<HTMLAnchorElement>) => {
 		ev.preventDefault();
-		console.log(authenticationDetails.authToken);
-		const response = await Fetch("/api/authenticate/logout", { method: "POST" });
+		const response = await DELETE("/api/logout", {});
 		if (response.status === HttpStatusCodes.OK) {
-			authenticationDetails.authToken = "";
+			authenticationDetails.accessToken = "";
 			this.props.loggedOut();
 		}
 	}
@@ -60,13 +59,13 @@ export class HeaderComponent extends Component<StateProps & DispatchProps, any> 
 function connectStateToProps(state: StoreState, ownProps: any): StateProps {
 	return {
 		...ownProps,
-		isAuthenticated: state.user.isAuthenticated
+		isAuthenticated: state.user.isAuthenticated,
 	};
 }
 
 function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps {
 	return {
-		loggedOut: () => dispatch({ type: "USER_LOGGED_OUT" })
+		loggedOut: () => dispatch({ type: "USER_LOGGED_OUT" }),
 	};
 }
 

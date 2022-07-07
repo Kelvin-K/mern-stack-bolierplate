@@ -10,16 +10,26 @@ services:
       - mongodata:/data/db
     ports:
       - 27017:27017
-  app:
-    container_name: app
-    build: .
+  redis:
+    image: redis:6.2-alpine
+    restart: always
     ports:
-      - 9000:9000
-    depends_on:
-      - 'mongo'
-    links:
-      - mongo
-    environment:
-      - DATABASE_CONNECTION_STRING=mongodb://mongo:27017/my_database
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+    volumes:
+      - redis:/data
+  # app:
+  #   container_name: app
+  #   build: .
+  #   ports:
+  #     - 9000:9000
+  #   depends_on:
+  #     - 'mongo'
+  #   links:
+  #     - mongo
+  #   environment:
+  #     - DATABASE_CONNECTION_STRING=mongodb://mongo:27017/my_database
 volumes:
   mongodata:
+  redis:
+    driver: local

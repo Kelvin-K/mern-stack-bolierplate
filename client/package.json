@@ -42,7 +42,8 @@
 	"private": true,
 	"proxy": "http://localhost:9000/",
 	"scripts": {
-		"build": "react-scripts build && mv build ../build/public",
+		"build:windows": "react-scripts build && move build \"../build/public\"",
+		"build:linux": "react-scripts build && mv build ../build/public",
 		"eject": "react-scripts eject",
 		"start": "react-scripts start",
 		"test": "react-scripts test"

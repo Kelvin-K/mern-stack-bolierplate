@@ -1,12 +1,13 @@
 import bodyParser from "body-parser";
 import cookieParser from "cookie-parser";
 import cors from "cors";
-import express, { Express, Request, Response } from "express";
-import mongoose from "mongoose";
+import express, { Express, NextFunction, Request, Response } from "express";
 import path from "path";
 import swaggerUi from "swagger-ui-express";
+import MongoHelper from "./helper/mongoHelper";
+import RedisHelper from "./helper/redisHelper";
 import LoggingMiddleWare from "./middleware/loggingMiddleWare";
-import AuthenticateRoute from "./routers/authenticateRoute";
+import AuthRouter from "./routers/authRouter";
 import HealthRouter from "./routers/healthRouter";
 import UserRouter from "./routers/userRouter";
 
@@ -23,49 +24,45 @@ class ExpressServer {
 	}
 
 	configureMiddleware = () => {
-		// Parse cookies		
 		this.app.use(cookieParser());
-
-		// CORS		
 		this.app.use(cors());
-
-		// Parse application/json
 		this.app.use(bodyParser.json());
-
-		// parse various different custom JSON types as JSON
 		this.app.use(bodyParser.json({ type: 'application/*+json' }));
-
-		// Parse application/x-www-form-urlencoded
 		this.app.use(bodyParser.urlencoded({ extended: false }));
-
-		// parse some custom thing into a Buffer
 		this.app.use(bodyParser.raw({ type: 'application/vnd.custom-type' }));
-
-		// parse an HTML body into a string
 		this.app.use(bodyParser.text({ type: 'text/html' }));
-
-		// Log requests for auditing purpose
 		this.app.use(LoggingMiddleWare);
-
-		// Serve static files
 		this.app.use(express.static('public'));
-
-		this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 	}
 
 	configureRoutes = () => {
 		// api
 		this.app.use("/api/health", new HealthRouter().router);
 		this.app.use("/api/users", new UserRouter().router);
-		this.app.use("/api/authenticate", new AuthenticateRoute().router);
+		this.app.use("/api", new AuthRouter().router);
+
+		// swagger
+		this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 		// client
-		this.app.get("*", (req: Request, res: Response) => res.sendFile(path.resolve('public', 'index.html')));
+		this.app.use((req: Request, res: Response) => res.sendFile(path.resolve('public', 'index.html')));
+
+		// Error Handling
+		this.app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+			res.status(err.status || 500)
+			res.send({
+				error: {
+					status: err.status || 500,
+					message: err.message
+				}
+			});
+		});
 	}
 
 	start = async (port: any, databaseUrl: string) => {
 		try {
-			await mongoose.connect(databaseUrl);
+			await MongoHelper.connect(databaseUrl);
+			await RedisHelper.connect("redis://localhost:6379", "eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81");
 			this.app.listen(port, () => console.log(`Server started listening at http://localhost:${port}/\nAccess API documentation by http://localhost:${port}/api-docs`));
 		}
 		catch (error) {
