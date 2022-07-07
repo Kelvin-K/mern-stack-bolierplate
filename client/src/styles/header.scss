@@ -1,18 +1,11 @@
 header {
-	height: 55px;
 	padding: 0px 20px;
 	background-color: black;
 	display: flex;
-	align-items: baseline;
 	position: -webkit-sticky;
 	position: sticky;
 	top: 0;
-
-	section {
-		display: flex;
-		justify-content: space-between;
-		flex-grow: 1;
-	}
+	transition: height 0.15s ease-out;
 
 	.brand_name {
 		font-size: 1.2rem;
@@ -21,6 +14,14 @@ header {
 			color: black;
 			background-color: gray;
 		}
+	}
+
+	img {
+		border: 2px solid white;
+		background-color: black;
+		border-radius: 4px;
+		height: 30px;
+		cursor: pointer;
 	}
 
 	a {
@@ -35,3 +36,121 @@ header {
 		}
 	}
 }
+
+.bigHeader {
+	align-items: baseline;
+
+	section {
+		flex-grow: 1;
+		display: flex;
+		justify-content: space-between;
+	}
+}
+
+.smallHeader {
+	align-items: center;
+	flex-wrap: wrap;
+	justify-content: space-between;
+
+	section {
+		width: 100%;
+		transition: 3s;
+		margin-bottom: 5px;
+	}
+
+	a:not(.brand_name) {
+		display: block;
+
+		&:hover {
+			background-color: gray;
+			color: black;
+		}
+	}
+}
+
+// .bigHeader {
+// 	height: 55px;
+// 	padding: 0px 20px;
+// 	background-color: black;
+// 	display: flex;
+// 	align-items: baseline;
+// 	position: -webkit-sticky;
+// 	position: sticky;
+// 	top: 0;
+
+// 	section {
+// 		display: flex;
+// 		justify-content: space-between;
+// 		flex-grow: 1;
+// 	}
+
+// 	img {
+// 		border: 2px solid white;
+// 		background-color: black;
+// 		border-radius: 4px;
+// 		height: 30px;
+// 		cursor: pointer;
+// 	}
+
+// 	.brand_name {
+// 		font-size: 1.2rem;
+
+// 		&:hover {
+// 			color: black;
+// 			background-color: gray;
+// 		}
+// 	}
+
+// 	a {
+// 		height: 100%;
+// 		line-height: 50px;
+// 		padding: 0px 10px;
+// 		text-decoration: none;
+// 		color: white;
+
+// 		&:hover {
+// 			color: gray;
+// 		}
+// 	}
+// }
+
+// @media only screen and (max-width: 700px) {
+// 	.smallHeader {
+// 		justify-content: space-between;
+// 		align-items: center;
+// 		flex-wrap: wrap;
+// 		height: auto;
+
+// 		img {
+// 			visibility: visible;
+// 			position: static;
+// 		}
+
+// 		.navSection {
+// 			width: 100vw;
+// 			background-color: black;
+// 			display: block;
+// 		}
+
+// 		.navSectionVisible {
+// 			visibility: visible;
+// 			position: static;
+// 			margin-bottom: 5px;
+// 		}
+
+// 		.navSectionHidden {
+// 			visibility: collapse;
+// 			position: absolute;
+// 		}
+
+// 		a:not(.brand_name) {
+// 			width: 100%;
+// 			display: block;
+
+// 			&:hover {
+// 				background-color: gray;
+// 				color: black;
+// 			}
+// 		}
+// 	}
+// }
