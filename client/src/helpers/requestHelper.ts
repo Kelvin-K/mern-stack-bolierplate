@@ -20,16 +20,16 @@ const getCommonHeaders = (existingHeaders: any, hasContent: boolean) => {
 
 const createRequest = async (url: string, method: string, headers: any, hasBody: boolean = false, body: string = ""): Promise<PromiseResponse> => {
 
-	const getOptions = (headers: any) => {
+	const getOptions = () => {
 		let options: any = {
 			method,
-			headers
+			headers: getCommonHeaders(headers, hasBody)
 		}
 		if (hasBody) options = { ...options, body }
 		return options;
 	}
 
-	const response = await fetch(url, getOptions(headers));
+	const response = await fetch(url, getOptions());
 	if (!authenticationDetails.accessToken || response.status !== HttpStatusCodes.UNAUTHORIZED)
 		return new Promise(resolve => resolve(response));
 
@@ -40,10 +40,10 @@ const createRequest = async (url: string, method: string, headers: any, hasBody:
 	const { accessToken } = await refreshTokenResponse.json();
 	authenticationDetails.accessToken = accessToken;
 
-	return fetch(url, getOptions(getCommonHeaders(headers, hasBody)));
+	return fetch(url, getOptions());
 }
 
-export const GET = async (url: string, headers: any = {}) => await createRequest(url, "GET", getCommonHeaders(headers, false));
-export const POST = async (url: string, body: any, headers: any = {}) => await createRequest(url, "POST", getCommonHeaders(headers, true), true, JSON.stringify(body));
-export const PUT = async (url: string, body: any, headers: any = {}) => await createRequest(url, "PUT", getCommonHeaders(headers, true), true, JSON.stringify(body));
-export const DELETE = async (url: string, body: any, headers: any = {}) => await createRequest(url, "DELETE", getCommonHeaders(headers, true), true, JSON.stringify(body));
+export const GET = async (url: string, headers: any = {}) => await createRequest(url, "GET", headers);
+export const POST = async (url: string, body: any, headers: any = {}) => await createRequest(url, "POST", headers, true, JSON.stringify(body));
+export const PUT = async (url: string, body: any, headers: any = {}) => await createRequest(url, "PUT", headers, true, JSON.stringify(body));
+export const DELETE = async (url: string, body: any, headers: any = {}) => await createRequest(url, "DELETE", headers, true, JSON.stringify(body));
