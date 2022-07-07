@@ -42,3 +42,5 @@ Run below command to get production build inside docker image
 ```powershell
 docker-compose build && docker-compose up
 ```
+
+## Uses redis for token management
