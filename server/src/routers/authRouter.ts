@@ -1,5 +1,5 @@
 import express, { NextFunction, Request, Response, Router } from "express";
-import createError from "http-errors";
+import createHttpError from "http-errors";
 import userLoginValidator from "../common/validators/userLoginValidator";
 import userRegistrationValidator from "../common/validators/userRegistrationValidator";
 import User from "../db/user";
@@ -19,12 +19,12 @@ class AuthRouter {
 	registerUser = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { error, value: validatedUser } = userRegistrationValidator.validate(req.body);
-			if (error) throw new createError.UnprocessableEntity(error.message);
+			if (error) throw new createHttpError.UnprocessableEntity(error.message);
 
 			const { confirmPassword, ...userDetails } = validatedUser;
 			const user = new User(userDetails);
-			if (await User.findOne({ username: user.username })) throw new createError.Conflict("Username is already in use.");
-			if (await User.findOne({ email: user.email })) throw new createError.Conflict("Email is already registered.");
+			if (await User.findOne({ username: user.username })) throw new createHttpError.Conflict("Username is already in use.");
+			if (await User.findOne({ email: user.email })) throw new createHttpError.Conflict("Email is already registered.");
 
 			await user.save();
 
@@ -38,14 +38,14 @@ class AuthRouter {
 	login = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const { error, value: validatedUser } = userLoginValidator.validate(req.body);
-			if (error) throw new createError.UnprocessableEntity(error.message);
+			if (error) throw new createHttpError.UnprocessableEntity(error.message);
 
 			const { username, password } = validatedUser;
 			const user = await User.findOne({ username });
-			if (!user) throw new createError.NotFound("User is not registered.");
+			if (!user) throw new createHttpError.NotFound("User is not registered.");
 
 			const isMatch = await user.isValidPassword(password);
-			if (!isMatch) throw new createError.Unauthorized("Username and Password combination is invalid.");
+			if (!isMatch) throw new createHttpError.Unauthorized("Username and Password combination is invalid.");
 
 			const accessToken = await signAccessToken(user.id);
 			const refreshToken = await signRefreshToken(user.id);
@@ -61,14 +61,14 @@ class AuthRouter {
 	refreshToken = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const refreshToken = req.cookies["refreshToken"];
-			if (!refreshToken) throw new createError.BadRequest();
+			if (!refreshToken) throw new createHttpError.BadRequest();
 
 			const payload = await verifyRefreshToken(refreshToken);
 			const redisRefToken = await RedisHelper.client.get(payload.aud);
 			if (redisRefToken !== refreshToken) {
 				await RedisHelper.client.del(payload.aud);
 				res.clearCookie("refreshToken");
-				throw new createError.Unauthorized();
+				throw new createHttpError.Unauthorized();
 			}
 
 			const accessToken = await signAccessToken(payload.aud);
@@ -85,7 +85,7 @@ class AuthRouter {
 	logout = async (req: Request, res: Response, next: NextFunction) => {
 		try {
 			const refreshToken = req.cookies["refreshToken"];
-			if (!refreshToken) throw new createError.BadRequest();
+			if (!refreshToken) throw new createHttpError.BadRequest();
 
 			const payload = await verifyRefreshToken(refreshToken);
 			await RedisHelper.client.del(payload.aud);

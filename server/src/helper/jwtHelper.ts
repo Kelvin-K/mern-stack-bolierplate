@@ -1,4 +1,4 @@
-import createError from 'http-errors';
+import createHttpError from 'http-errors';
 import * as jwt from "jsonwebtoken";
 
 //using require('crypto').randomBytes(64).toString('hex')
@@ -16,7 +16,7 @@ export const signToken = (userId: any, secret: string, timeOut: string): Promise
 		}
 		jwt.sign(payload, secret, options, (err, token) => {
 			if (err) {
-				return reject(new createError.InternalServerError());
+				return reject(new createHttpError.InternalServerError());
 			}
 			resolve(token!);
 		});
@@ -36,7 +36,7 @@ export const verifyToken = (token: string, secret: string): Promise<any> =>
 			if (error) {
 				console.log(error);
 				const message = error.name === "JsonWebTokenError" ? "Unauthorized" : error.message;
-				return reject(new createError.Unauthorized(message));
+				return reject(new createHttpError.Unauthorized(message));
 			}
 			resolve(payload);
 		});
