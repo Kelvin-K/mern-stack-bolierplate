@@ -10,6 +10,7 @@ const HomePage = lazy(() => import('./pages/homePage'));
 const NotFoundPage = lazy(() => import('./pages/notFoundPage'));
 const SignUpPage = lazy(() => import('./pages/signUpPage'));
 const LoginPage = lazy(() => import('./pages/loginPage'));
+const ProfilePage = lazy(() => import('./pages/profilePage'));
 
 export default class App extends Component {
 	render() {
@@ -18,14 +19,17 @@ export default class App extends Component {
 				<Provider store={ store }>
 					<ServerHelper>
 						<Switch>
-							<RouteWrapper exact path="/" routeType='common'>
-								<HomePage />
-							</RouteWrapper>
 							<RouteWrapper path="/signup" routeType='publicOnly'>
 								<SignUpPage />
 							</RouteWrapper>
 							<RouteWrapper path="/login" routeType='publicOnly'>
 								<LoginPage />
+							</RouteWrapper>
+							<RouteWrapper path="/profile" routeType='private'>
+								<ProfilePage />
+							</RouteWrapper>
+							<RouteWrapper exact path="/" routeType='common'>
+								<HomePage />
 							</RouteWrapper>
 							<RouteWrapper path="/" standAlonePage={ true } routeType='common'>
 								<NotFoundPage />

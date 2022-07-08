@@ -62,36 +62,32 @@ export class HeaderComponent extends Component<StateProps & DispatchProps, Heade
 
 	render() {
 		const smallWindow = this.state.windowWidth < 800;
+		const sectionVisible = !smallWindow || (smallWindow && this.state.areMenuOptionsVisible);
 		return (
 			<header className={ smallWindow ? "smallHeader" : "bigHeader" }>
 				<Link to="/" className='brand_name'>Mern Stack Boilerplate</Link>
+				{ smallWindow && <img src={ MenuIcon } alt="menu" onClick={ this.handleMenuClick } /> }
 				{
-					smallWindow &&
-					<img src={ MenuIcon } alt="menu" onClick={ this.handleMenuClick } />
-				}
-				{
-					(!smallWindow || (smallWindow && this.state.areMenuOptionsVisible)) &&
-					<section>
-						<nav>
-							<Link to="/invalid-page">Invalid Page</Link>
-						</nav>
-						<nav>
-							{
-								this.props.isAuthenticated
-									? (
+					sectionVisible && (
+						<section>
+							<nav>
+								<Link to="/invalid-page">Invalid Page</Link>
+							</nav>
+							<nav>
+								{
+									this.props.isAuthenticated ?
 										<>
+											<Link to="/profile">Profile</Link>
 											<a href="/logout" onClick={ this.handleLogout }>Logout</a>
-										</>
-									)
-									: (
+										</> :
 										<>
 											<Link to="/signup">Sign Up</Link>
 											<Link to="/login">Login</Link>
 										</>
-									)
-							}
-						</nav>
-					</section>
+								}
+							</nav>
+						</section>
+					)
 				}
 			</header>
 		);
