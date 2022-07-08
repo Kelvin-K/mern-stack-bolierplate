@@ -59,7 +59,7 @@ const userRegistrationValidator = Joi.object({
 	contactNumber: Joi.string()
 		.pattern(/^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/)
 		.messages({
-			'string.empty': 'Email is required.',
+			'string.empty': 'Contact number is required.',
 			'string.pattern.base': 'Contact number is invalid',
 		}),
 });
