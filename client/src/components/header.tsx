@@ -2,6 +2,7 @@ import HttpStatusCodes from 'http-status-codes';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import InstanceHelper from '../helpers/instanceHelper';
 import { authenticationDetails, DELETE } from '../helpers/requestHelper';
 import MenuIcon from "../images/menu.svg";
 import { StoreDispatch, StoreState } from '../store/store';
@@ -37,7 +38,7 @@ export class HeaderComponent extends Component<StateProps & DispatchProps, Heade
 	}
 
 	handleDocumentClick = () => {
-		this.setState(state => ({ areMenuOptionsVisible: false }));
+		this.setState({ areMenuOptionsVisible: false });
 		document.removeEventListener("click", this.handleDocumentClick);
 	}
 
@@ -57,7 +58,10 @@ export class HeaderComponent extends Component<StateProps & DispatchProps, Heade
 		if (response.status === HttpStatusCodes.OK) {
 			authenticationDetails.accessToken = "";
 			this.props.loggedOut();
+			return InstanceHelper.notifier.showNotification("Logout successful!", "success");
 		}
+
+		return InstanceHelper.notifier.showNotification("An internal error occurred. Please contact system administrator.", "warning");
 	}
 
 	render() {
@@ -78,7 +82,7 @@ export class HeaderComponent extends Component<StateProps & DispatchProps, Heade
 									this.props.isAuthenticated ?
 										<>
 											<Link to="/profile">Profile</Link>
-											<a href="/logout" onClick={ this.handleLogout }>Logout</a>
+											<Link to="/logout" onClick={ this.handleLogout }>Logout</Link>
 										</> :
 										<>
 											<Link to="/signup">Sign Up</Link>

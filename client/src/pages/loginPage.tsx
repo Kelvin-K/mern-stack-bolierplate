@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import userLoginValidator from "../common/validators/userLoginValidator";
+import InstanceHelper from "../helpers/instanceHelper";
 import { authenticationDetails, POST } from '../helpers/requestHelper';
 import { StoreDispatch, StoreState } from '../store/store';
 
@@ -10,17 +11,10 @@ interface DispatchProps {
 	userAuthenticated: () => void;
 }
 
-class LoginPageFields {
+class LoginPageState {
 	username: string = "";
 	password: string = "";
 }
-
-class LoginPageState {
-	fields: LoginPageFields = new LoginPageFields();
-	successMessage: string = "";
-	errorMessage: string = "";
-}
-
 
 class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, LoginPageState>
 {
@@ -36,10 +30,7 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 		this.setState(state => {
 			return {
 				...state,
-				fields: {
-					...state.fields,
-					[property]: value
-				}
+				[property]: value
 			};
 		})
 	}
@@ -55,40 +46,25 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 		);
 	}
 
-	submitChange = (ev: React.FormEvent<HTMLFormElement>) => {
+	submitChange = async (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
 
-		const { error, value: validatedUser } = userLoginValidator.validate(this.state.fields);
-		if (error) return this.setState({ errorMessage: error.message });
+		const { error, value: validatedUser } = userLoginValidator.validate(this.state);
+		if (error) return InstanceHelper.notifier.showNotification(error.message, "error");
 
-		this.setState({ errorMessage: "", }, async () => {
-			await this.login(validatedUser);
-		});
-	}
-
-	login = async (loginDetails: any) => {
-		const response = await POST("/api/login", loginDetails);
+		const response = await POST("/api/login", validatedUser);
 		const body = await response.json();
 
-		switch (response.status) {
-			case HttpStatusCodes.OK:
-				return this.setState({ errorMessage: "", successMessage: "Login successfully. We will redirect you shortly." },
-					() => setTimeout(() => {
-						authenticationDetails.accessToken = body.accessToken;
-						this.props.userAuthenticated();
-						this.props.history.push("/");
-					}, 2000)
-				);
-			case HttpStatusCodes.NOT_FOUND:
-			case HttpStatusCodes.UNAUTHORIZED:
-				return this.setState({
-					errorMessage: body.error.message
-				});
-			default:
-				return this.setState(({
-					errorMessage: "An internal error occurred. Please contact system administrator."
-				}));
+		if ([HttpStatusCodes.UNPROCESSABLE_ENTITY, HttpStatusCodes.NOT_FOUND, HttpStatusCodes.UNAUTHORIZED].includes(response.status))
+			return InstanceHelper.notifier.showNotification(body.error.message, "error");
+		else if (response.status === HttpStatusCodes.OK) {
+			authenticationDetails.accessToken = body.accessToken;
+			this.props.userAuthenticated();
+			this.props.history.push("/");
+			return InstanceHelper.notifier.showNotification("Login Successful!", "success");
 		}
+		else
+			return InstanceHelper.notifier.showNotification("An internal error occurred. Please contact system administrator.", "warning");
 	}
 
 	render() {
@@ -96,11 +72,9 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 			<div className="center_form_container">
 				<form onSubmit={ this.submitChange }>
 					<h1 className="form_header">Log In</h1>
-					{ this.getFormField("Username", "username", this.state.fields.username) }
-					{ this.getFormField("Password", "password", this.state.fields.password, "password") }
+					{ this.getFormField("Username", "username", this.state.username) }
+					{ this.getFormField("Password", "password", this.state.password, "password") }
 					<button type='submit' className='btn btn-primary'>Submit</button>
-					{ this.state.errorMessage && <div className="error_message">{ this.state.errorMessage }</div> }
-					{ this.state.successMessage && <div className="success_message">{ this.state.successMessage }</div> }
 				</form>
 			</div>
 		);

@@ -1,0 +1,63 @@
+@keyframes slide-up {
+	0% {
+		bottom: -71px;
+	}
+
+	25% {
+		bottom: 0px;
+	}
+
+	75% {
+		bottom: 0px;
+	}
+
+	100% {
+		bottom: -71px;
+	}
+}
+
+.notification_holder {
+	width: 100vw;
+	padding: 20px;
+	position: fixed;
+	animation: slide-up;
+	display: flex;
+	justify-content: center;
+	bottom: -71px;
+
+	.notification {
+		display: flex;
+		align-items: center;
+		padding: 5px 10px;
+		color: white;
+		border-radius: 5px;
+
+		&.none {
+			background-color: dodgerblue;
+		}
+
+		&.success {
+			background-color: green;
+		}
+
+		&.error {
+			background-color: rgb(196, 19, 19);
+		}
+
+		&.warning {
+			background-color: orange;
+			color: black;
+		}
+	}
+
+	.message {
+		margin-right: 20px;
+		pointer-events: none;
+		max-width: 100%;
+	}
+
+	.close_notification {
+		height: 20px;
+		cursor: pointer;
+	}
+}
