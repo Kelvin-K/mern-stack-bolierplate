@@ -1,6 +1,7 @@
 import { Component } from 'react';
 import InstanceHelper from '../helpers/instanceHelper';
-import CloseIcon from "../images/close.svg";
+import BlackCloseIcon from "../images/blackClose.svg";
+import WhiteCloseIcon from "../images/whiteClose.svg";
 import INotifier from '../interfaces/INotifier';
 import "../styles/notifier.scss";
 
@@ -48,7 +49,7 @@ export default class Notifier extends Component<any, NotifierState> implements I
 			<div className="notification_holder" style={ style }>
 				<div className={ "notification " + this.state.type }>
 					<div className="message">{ this.state.message }</div>
-					<img src={ CloseIcon } alt="close" className="close_notification" onClick={ this.closeNotification } />
+					<img src={ this.state.type === "warning" ? BlackCloseIcon : WhiteCloseIcon } alt="close" className="close_notification" onClick={ this.closeNotification } />
 				</div>
 			</div>
 		);

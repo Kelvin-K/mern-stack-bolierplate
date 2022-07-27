@@ -48,23 +48,25 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 
 	submitChange = async (ev: React.FormEvent<HTMLFormElement>) => {
 		ev.preventDefault();
+		try {
+			const { error, value: validatedUser } = userLoginValidator.validate(this.state);
+			if (error) return InstanceHelper.notifier.showNotification(error.message, "error");
 
-		const { error, value: validatedUser } = userLoginValidator.validate(this.state);
-		if (error) return InstanceHelper.notifier.showNotification(error.message, "error");
+			console.log(validatedUser);
+			const response = await POST("/api/login", validatedUser);
+			const body = await response.json();
 
-		const response = await POST("/api/login", validatedUser);
-		const body = await response.json();
-
-		if ([HttpStatusCodes.UNPROCESSABLE_ENTITY, HttpStatusCodes.NOT_FOUND, HttpStatusCodes.UNAUTHORIZED].includes(response.status))
-			return InstanceHelper.notifier.showNotification(body.error.message, "error");
-		else if (response.status === HttpStatusCodes.OK) {
-			authenticationDetails.accessToken = body.accessToken;
-			this.props.userAuthenticated();
-			this.props.history.push("/");
-			return InstanceHelper.notifier.showNotification("Login Successful!", "success");
+			if ([HttpStatusCodes.UNPROCESSABLE_ENTITY, HttpStatusCodes.NOT_FOUND, HttpStatusCodes.UNAUTHORIZED].includes(response.status))
+				return InstanceHelper.notifier.showNotification(body.error.message, "error");
+			else if (response.status === HttpStatusCodes.OK) {
+				authenticationDetails.accessToken = body.accessToken;
+				this.props.userAuthenticated();
+				this.props.history.push("/");
+				return InstanceHelper.notifier.showNotification("Login Successful!", "success");
+			}
 		}
-		else
-			return InstanceHelper.notifier.showNotification("An internal error occurred. Please contact system administrator.", "warning");
+		catch { }
+		return InstanceHelper.notifier.showNotification("An internal error occurred. Please contact system administrator.", "warning");
 	}
 
 	render() {
