@@ -1,8 +1,7 @@
-import HttpStatusCodes from 'http-status-codes';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import Loading from '../components/loading';
-import { authenticationDetails, GET, POST } from '../helpers/requestHelper';
+import AxiosAPI from '../helpers/axiosAPI';
 import { StoreDispatch, StoreState } from '../store/store';
 
 interface StateProps {
@@ -21,22 +20,22 @@ export class ServerHelperComponent extends Component<StateProps & DispatchProps,
 {
 	async componentDidMount() {
 		if (!this.props.authenticationStatusChecked) {
-			const response = await POST("/api/refresh-token", {});
-			if (response.status === HttpStatusCodes.OK) {
-				const { accessToken } = await response.json();
-				authenticationDetails.accessToken = accessToken;
+			try {
+				let refreshToken = await AxiosAPI.refreshAccessToken();
+				this.props.userAuthenticationStatusChecked(true);
+			} catch {
+				this.props.userAuthenticationStatusChecked(false);
 			}
-			this.props.userAuthenticationStatusChecked(response.status === HttpStatusCodes.OK);
 		}
 	}
 
 	async componentDidUpdate() {
 		if (this.props.isAuthenticated && !this.props.userDetailsAvailable) {
-			const response = await GET("/api/users");
-			if (response.status === HttpStatusCodes.OK) {
-				const { username, firstName, lastName, email, contactNumber } = await response.json();
+			try {
+				const response = await AxiosAPI.privateInstance("/api/users");
+				const { username, firstName, lastName, email, contactNumber } = response.data;
 				this.props.userDetailsReceived(username, firstName, lastName, email, contactNumber);
-			}
+			} catch { }
 		}
 	}
 

@@ -9,16 +9,23 @@ export class UserState {
 	lastName: string = "";
 	email: string = "";
 	contactNumber: string = "";
+	access_token: string = "";
 }
 
 export type UserAction =
-	{ type: "USER_LOGGED_OUT" | "USER_AUTHENTICATED" } |
-	{ type: "AUTHENTICATION_STATUS_CHECKED", isAuthenticated: boolean } |
+	{ type: "USER_LOGGED_OUT" } |
+	{ type: "USER_AUTHENTICATED" | "SET_ACCESS_TOKEN", access_token: string } |
+	{ type: "AUTHENTICATION_STATUS_CHECKED", isAuthenticated: boolean, access_token: string } |
 	{ type: "USER_DETAILS_RECEIVED", username: string, firstName: string, lastName: string, email: string, contactNumber: string }
 
 export const UserReducer: Reducer<UserState, UserAction> = (state: UserState = new UserState(), action: UserAction) => {
 
 	switch (action.type) {
+		case "SET_ACCESS_TOKEN":
+			return {
+				...state,
+				access_token: action.access_token
+			};
 		case "USER_LOGGED_OUT":
 			return {
 				...new UserState(),
@@ -28,6 +35,7 @@ export const UserReducer: Reducer<UserState, UserAction> = (state: UserState = n
 			return {
 				...state,
 				isAuthenticated: true,
+				access_token: action.access_token
 			}
 		case "USER_DETAILS_RECEIVED":
 			const { type, ...userDetails } = action;
@@ -40,7 +48,8 @@ export const UserReducer: Reducer<UserState, UserAction> = (state: UserState = n
 			return {
 				...state,
 				authenticationStatusChecked: true,
-				isAuthenticated: action.isAuthenticated
+				isAuthenticated: action.isAuthenticated,
+				access_token: action.access_token
 			};
 		default:
 			return state;

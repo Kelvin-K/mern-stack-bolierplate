@@ -1,9 +1,10 @@
+import { AxiosError } from "axios";
 import HttpStatusCodes from "http-status-codes";
 import { Component } from 'react';
 import { RouteComponentProps, withRouter } from "react-router-dom";
 import userRegistrationValidator from "../common/validators/userRegistrationValidator";
+import AxiosAPI from "../helpers/axiosAPI";
 import InstanceHelper from "../helpers/instanceHelper";
-import { POST } from '../helpers/requestHelper';
 
 class SignUpPageState {
 	username: string = "";
@@ -51,17 +52,17 @@ class SignUpPageComponent extends Component<RouteComponentProps, SignUpPageState
 			const { error, value: validatedUser } = userRegistrationValidator.validate(this.state);
 			if (error) return InstanceHelper.notifier.showNotification(error.message, "error");
 
-			const response = await POST("/api/register", validatedUser);
-			const body = await response.json();
-
-			if ([HttpStatusCodes.UNPROCESSABLE_ENTITY, HttpStatusCodes.CONFLICT].includes(response.status))
-				return InstanceHelper.notifier.showNotification(body.error.message, "error");
-			else if (response.status === HttpStatusCodes.OK) {
-				this.props.history.push("/login");
-				return InstanceHelper.notifier.showNotification("Account created successfully!", "success");
+			const response = await AxiosAPI.instance.post("/api/register", validatedUser);
+			this.props.history.push("/login");
+			return InstanceHelper.notifier.showNotification("Account created successfully!", "success");
+		}
+		catch (error) {
+			if (error instanceof AxiosError) {
+				const response = error.response!;
+				if ([HttpStatusCodes.UNPROCESSABLE_ENTITY, HttpStatusCodes.CONFLICT].includes(response.status))
+					return InstanceHelper.notifier.showNotification(response.data.message, "error");
 			}
 		}
-		catch { }
 		return InstanceHelper.notifier.showNotification("An internal error occurred. Please contact system administrator.", "warning");
 	}
 

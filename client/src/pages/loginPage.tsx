@@ -1,14 +1,15 @@
+import { AxiosError } from "axios";
 import HttpStatusCodes from "http-status-codes";
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import userLoginValidator from "../common/validators/userLoginValidator";
+import AxiosAPI from "../helpers/axiosAPI";
 import InstanceHelper from "../helpers/instanceHelper";
-import { authenticationDetails, POST } from '../helpers/requestHelper';
 import { StoreDispatch, StoreState } from '../store/store';
 
 interface DispatchProps {
-	userAuthenticated: () => void;
+	userAuthenticated: (access_token: string) => void;
 }
 
 class LoginPageState {
@@ -52,20 +53,18 @@ class LoginPageComponent extends Component<RouteComponentProps & DispatchProps, 
 			const { error, value: validatedUser } = userLoginValidator.validate(this.state);
 			if (error) return InstanceHelper.notifier.showNotification(error.message, "error");
 
-			console.log(validatedUser);
-			const response = await POST("/api/login", validatedUser);
-			const body = await response.json();
-
-			if ([HttpStatusCodes.UNPROCESSABLE_ENTITY, HttpStatusCodes.NOT_FOUND, HttpStatusCodes.UNAUTHORIZED].includes(response.status))
-				return InstanceHelper.notifier.showNotification(body.error.message, "error");
-			else if (response.status === HttpStatusCodes.OK) {
-				authenticationDetails.accessToken = body.accessToken;
-				this.props.userAuthenticated();
-				this.props.history.push("/");
-				return InstanceHelper.notifier.showNotification("Login Successful!", "success");
+			const { data: body } = await AxiosAPI.instance.post("/api/login", validatedUser);
+			this.props.userAuthenticated(body.access_token);
+			this.props.history.push("/");
+			return InstanceHelper.notifier.showNotification("Login Successful!", "success");
+		}
+		catch (error) {
+			if (error instanceof AxiosError) {
+				const { status, data: body } = error.response!;
+				if ([HttpStatusCodes.UNPROCESSABLE_ENTITY, HttpStatusCodes.NOT_FOUND, HttpStatusCodes.UNAUTHORIZED].includes(status))
+					return InstanceHelper.notifier.showNotification(body.error.message, "error");
 			}
 		}
-		catch { }
 		return InstanceHelper.notifier.showNotification("An internal error occurred. Please contact system administrator.", "warning");
 	}
 
@@ -91,7 +90,7 @@ function connectStateToProps(state: StoreState, ownProps: any): RouteComponentPr
 
 function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps {
 	return {
-		userAuthenticated: () => dispatch({ type: "USER_AUTHENTICATED" })
+		userAuthenticated: (access_token: string) => dispatch({ type: "USER_AUTHENTICATED", access_token })
 	}
 }
 
