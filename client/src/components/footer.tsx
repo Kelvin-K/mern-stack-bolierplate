@@ -1,10 +1,7 @@
-import { Component } from 'react';
 
-export default class Footer extends Component {
-	render() {
-		return (
-			<footer>
-			</footer>
-		);
-	}
+export default function Footer() {
+	return (
+		<footer>
+		</footer>
+	);
 }

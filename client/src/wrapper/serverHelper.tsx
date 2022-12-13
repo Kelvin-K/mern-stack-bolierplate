@@ -1,13 +1,13 @@
-import { Component } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import Loading from '../components/loading';
-import AxiosAPI from '../helpers/axiosAPI';
+import { APIContext } from '../providers/APIProvider';
 import { StoreDispatch, StoreState } from '../store/store';
 
 interface StateProps {
 	isAuthenticated: boolean;
 	userDetailsAvailable: boolean;
-	authenticationStatusChecked: boolean;
+	authStatusChecked: boolean;
 	children: any;
 }
 
@@ -16,49 +16,45 @@ interface DispatchProps {
 	userDetailsReceived: (username: string, firstName: string, lastName: string, email: string, contactNumber: string) => void;
 }
 
-export class ServerHelperComponent extends Component<StateProps & DispatchProps, any>
-{
-	async componentDidMount() {
-		if (!this.props.authenticationStatusChecked) {
-			try {
-				let refreshToken = await AxiosAPI.refreshAccessToken();
-				this.props.userAuthenticationStatusChecked(true);
-			} catch {
-				this.props.userAuthenticationStatusChecked(false);
-			}
-		}
-	}
+function ServerHelper(props: StateProps & DispatchProps) {
+	const api = React.useContext(APIContext);
 
-	async componentDidUpdate() {
-		if (this.props.isAuthenticated && !this.props.userDetailsAvailable) {
-			try {
-				const response = await AxiosAPI.privateInstance("/api/users");
-				const { username, firstName, lastName, email, contactNumber } = response.data;
-				this.props.userDetailsReceived(username, firstName, lastName, email, contactNumber);
-			} catch { }
+	useEffect(() => {
+		if (!props.authStatusChecked) {
+			api.refreshAccessToken()
+				.then(() => {
+					props.userAuthenticationStatusChecked(true);
+				})
+				.catch(() => {
+					props.userAuthenticationStatusChecked(false);
+				});
 		}
-	}
+		if (props.isAuthenticated && !props.userDetailsAvailable) {
+			api.privateInstance("/api/users")
+				.then(response => {
+					const { username, firstName, lastName, email, contactNumber } = response.data;
+					props.userDetailsReceived(username, firstName, lastName, email, contactNumber);
+				})
+		}
+	});
 
-	render() {
-		return this.props.authenticationStatusChecked ? this.props.children : <Loading />;
-	}
+	return props.authStatusChecked ? props.children : <Loading />;
 }
 
-function connectStateToProps(state: StoreState, ownProps: any): StateProps {
+function mapStateToProps(state: StoreState, ownProps: any): StateProps {
 	return {
 		...ownProps,
 		isAuthenticated: state.user.isAuthenticated,
 		userDetailsAvailable: state.user.userDetailsAvailable,
-		authenticationStatusChecked: state.user.authenticationStatusChecked
+		authStatusChecked: state.user.authenticationStatusChecked
 	};
 }
 
-function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps {
+function mapDispatchToProps(dispatch: StoreDispatch): DispatchProps {
 	return {
 		userAuthenticationStatusChecked: (isAuthenticated: boolean) => dispatch({ type: "AUTHENTICATION_STATUS_CHECKED", isAuthenticated }),
 		userDetailsReceived: (username: string, firstName: string, lastName: string, email: string, contactNumber: string) => dispatch({ type: "USER_DETAILS_RECEIVED", username, firstName, lastName, email, contactNumber }),
 	}
 }
 
-let ServerHelper = connect(connectStateToProps, connectDispatchToProps)(ServerHelperComponent);
-export default ServerHelper;
+export default connect(mapStateToProps, mapDispatchToProps)(ServerHelper);

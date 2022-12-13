@@ -1,4 +1,3 @@
-import { Component } from 'react';
 import { connect } from 'react-redux';
 import { StoreDispatch, StoreState } from '../store/store';
 
@@ -10,28 +9,25 @@ interface DispatchProps {
 
 }
 
-export class ProfilePageComponent extends Component<StateProps & DispatchProps, any>
-{
-	render() {
-		return (
-			<div className="ProfilePage">
 
-			</div>
-		);
-	}
+function ProfilePage(props: StateProps & DispatchProps) {
+	return (
+		<div className="ProfilePage">
+
+		</div>
+	)
 }
 
-function connectStateToProps(state: StoreState, ownProps: any): StateProps {
+function mapStateToProps(state: StoreState, ownProps: any): StateProps {
 	return {
 		...ownProps,
 	};
 }
 
-function connectDispatchToProps(dispatch: StoreDispatch): DispatchProps {
+function mapDispatchToProps(dispatch: StoreDispatch): DispatchProps {
 	return {
 
 	}
 }
 
-let ProfilePage = connect(connectStateToProps, connectDispatchToProps)(ProfilePageComponent);
-export default ProfilePage;
+export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);

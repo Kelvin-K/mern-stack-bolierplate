@@ -1,4 +1,4 @@
-import React, { Component, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { connect } from 'react-redux';
 import { Redirect, Route } from 'react-router-dom';
 import Loading from '../components/loading';
@@ -17,48 +17,29 @@ interface StateProps extends OwnProps {
 	isAuthenticated: boolean;
 }
 
-export class RouteWrapperComponent extends Component<StateProps, any>
-{
-	render() {
-		if (this.props.routeType === "publicOnly" && this.props.isAuthenticated) {
-			return (
-				<Redirect to="/" />
-			);
-		}
-
-		if (this.props.routeType === "private" && !this.props.isAuthenticated) {
-			return (
-				<Redirect to="/" />
-			);
-		}
-
-		if (
-			this.props.routeType === "common"
-			|| this.props.routeType === "public"
-			|| (this.props.routeType === "publicOnly" && !this.props.isAuthenticated)
-			|| (this.props.routeType === "private" && this.props.isAuthenticated)
-		) {
-			return (
-				<Route exact={ this.props.exact } path={ this.props.path }>
-					<Suspense fallback={ <Loading /> }>
-						{
-							this.props.standAlonePage
-								? this.props.children
-								: <BasePage>{ this.props.children }</BasePage>
-						}
-					</Suspense>
-				</Route>
-			);
-		}
+function RouteWrapper(props: StateProps) {
+	if ((props.routeType === "publicOnly" && props.isAuthenticated) || (props.routeType === "private" && !props.isAuthenticated)) {
+		return <Redirect to="/" />;
 	}
+
+	return (
+		<Route exact={ props.exact } path={ props.path }>
+			<Suspense fallback={ <Loading /> }>
+				{
+					props.standAlonePage
+						? props.children
+						: <BasePage>{ props.children }</BasePage>
+				}
+			</Suspense>
+		</Route>
+	);
 }
 
-function connectStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
+function mapStateToProps(state: StoreState, ownProps: OwnProps): StateProps {
 	return {
 		...ownProps,
 		isAuthenticated: state.user.isAuthenticated
 	};
 }
 
-let RouteWrapper = connect(connectStateToProps)(RouteWrapperComponent);
-export default RouteWrapper;
+export default connect(mapStateToProps)(RouteWrapper);
