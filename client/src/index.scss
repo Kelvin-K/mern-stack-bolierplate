@@ -1,0 +1,36 @@
+@import "./styles/modules/fonts.scss";
+@import "./styles/modules/settings.scss";
+@import "./styles/modules/palate.scss";
+@import "./styles/modules/mixin.scss";
+
+@import "./styles/framework/forms.scss";
+@import "./styles/framework/buttons.scss";
+
+* {
+	margin: 0px;
+	padding: 0px;
+	font-family: $fontFamily1;
+	box-sizing: border-box;
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+code {
+	font-family: $fontFamily2;
+}
+
+.full_page{
+	height: 100vh;
+	width: 100vw;
+}
+
+.fullSizeCenterContainer {
+	height: 100%;
+	width: 100%;
+	display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,13 +1,13 @@
 import { lazy } from 'react';
+import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import { BrowserRouter, Switch } from 'react-router-dom';
-import store from './store/store';
-import RouteWrapper from './wrapper/routeWrapper';
-import ServerHelper from './wrapper/serverHelper';
+import RouteWrapper from './components/routeWrapper';
+import Auth from './providers/auth';
+import Notification from './providers/notification';
+import store from './redux/store';
 
-import APIProvider from './providers/APIProvider';
-import NotificationProvider from './providers/NotificationProvider';
-import "./styles/app.scss";
+import "./app.scss";
 
 const HomePage = lazy(() => import('./pages/homePage'));
 const NotFoundPage = lazy(() => import('./pages/notFoundPage'));
@@ -17,11 +17,11 @@ const ProfilePage = lazy(() => import('./pages/profilePage'));
 
 export default function App() {
 	return (
-		<BrowserRouter>
-			<Provider store={ store }>
-				<NotificationProvider>
-					<APIProvider>
-						<ServerHelper>
+		<HelmetProvider>
+			<BrowserRouter>
+				<Provider store={ store }>
+					<Auth>
+						<Notification>
 							<Switch>
 								<RouteWrapper path="/signup" routeType='publicOnly'>
 									<SignUpPage />
@@ -32,17 +32,18 @@ export default function App() {
 								<RouteWrapper path="/profile" routeType='private'>
 									<ProfilePage />
 								</RouteWrapper>
+
 								<RouteWrapper exact path="/" routeType='common'>
 									<HomePage />
 								</RouteWrapper>
-								<RouteWrapper path="/" standAlonePage={ true } routeType='common'>
+								<RouteWrapper path="/" routeType='common' standAlonePage>
 									<NotFoundPage />
 								</RouteWrapper>
 							</Switch>
-						</ServerHelper>
-					</APIProvider>
-				</NotificationProvider>
-			</Provider>
-		</BrowserRouter>
+						</Notification>
+					</Auth>
+				</Provider>
+			</BrowserRouter>
+		</HelmetProvider>
 	)
 }

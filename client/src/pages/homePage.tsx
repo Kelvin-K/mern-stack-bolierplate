@@ -1,42 +1,46 @@
+import { Helmet } from 'react-helmet-async';
 import { connect } from 'react-redux';
-import { StoreDispatch, StoreState } from '../store/store';
+import { DefaultProps } from '../models/defaultProps';
+import { StoreDispatch, StoreState } from '../redux/store';
 
-interface StateProps {
-	isAuthenticated: boolean;
-	firstName: string;
-	lastName: string;
+import "./homePage.scss";
+
+function mapState(state: StoreState, ownProps: DefaultProps) {
+	return {
+		...ownProps,
+		isAuthenticated: state.auth.isAuthenticated,
+		firstName: state.user.firstName,
+		lastName: state.user.lastName
+	};
 }
 
-class DispatchProps {
+function mapDispatch(dispatch: StoreDispatch) {
+	return {
 
+	}
 }
 
-function HomePage(props: StateProps & DispatchProps) {
+function HomePageComponent(props: ReturnType<typeof mapState> & ReturnType<typeof mapDispatch>) {
 	return (
-		<div className="HomePage">
-			Welcome to home page.
-			<br />
-			<br />
-			Authenticated: { props.isAuthenticated.toString() }
-			<br />
-			First Name: { props.firstName || "NA" }
-			<br />
-			Last Name: { props.lastName || "NA" }
-		</div>
+		<>
+			<Helmet>
+				<title>Home | Mern Stack BoilerPlate</title>
+			</Helmet>
+			<div className="fullSizeCenterContainer">
+				<div className="HomePage">
+					Welcome to home page.
+					<br />
+					<br />
+					Authenticated: { props.isAuthenticated.toString() }
+					<br />
+					First Name: { props.firstName || "NA" }
+					<br />
+					Last Name: { props.lastName || "NA" }
+				</div>
+			</div>
+		</>
 	);
 }
 
-function mapStateToProps(state: StoreState, ownProps: any): StateProps {
-	return {
-		...ownProps,
-		...state.user
-	};
-}
-
-function mapDispatchToProps(dispatch: StoreDispatch): DispatchProps {
-	return {
-
-	};
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomePage);
+const HomePage = connect(mapState, mapDispatch)(HomePageComponent);
+export default HomePage;

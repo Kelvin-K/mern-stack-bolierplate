@@ -1,17 +1,16 @@
 import Footer from '../components/footer';
-import Header from '../components/header';
 import NavBar from '../components/navBar';
+import { DefaultProps } from '../models/defaultProps';
 
-interface BasePageProps {
-	children: any;
-}
+import "./basePage.scss";
 
-export default function BasePage(props: BasePageProps) {
+export default function BasePage(props: DefaultProps) {
 	return (
 		<>
-			<Header />
 			<NavBar />
-			{ props.children }
+			<div className="pageContent">
+				{ props.children }
+			</div>
 			<Footer />
 		</>
 	);

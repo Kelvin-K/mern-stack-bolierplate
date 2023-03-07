@@ -1,33 +1,33 @@
+import { Helmet } from 'react-helmet-async';
 import { connect } from 'react-redux';
-import { StoreDispatch, StoreState } from '../store/store';
+import { DefaultProps } from '../models/defaultProps';
+import { StoreDispatch, StoreState } from '../redux/store';
 
-interface StateProps {
-
-}
-
-interface DispatchProps {
-
-}
-
-
-function ProfilePage(props: StateProps & DispatchProps) {
-	return (
-		<div className="ProfilePage">
-
-		</div>
-	)
-}
-
-function mapStateToProps(state: StoreState, ownProps: any): StateProps {
+function mapState(state: StoreState, ownProps: DefaultProps) {
 	return {
 		...ownProps,
 	};
 }
 
-function mapDispatchToProps(dispatch: StoreDispatch): DispatchProps {
+function mapDispatch(dispatch: StoreDispatch) {
 	return {
 
 	}
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);
+function ProfilePageComponent(props: ReturnType<typeof mapState> & ReturnType<typeof mapDispatch>) {
+	return (
+		<>
+			<Helmet>
+				<title>Profile | Mern Stack BoilerPlate</title>
+			</Helmet>
+			<div className="ProfilePage">
+
+			</div>
+		</>
+
+	);
+}
+
+const ProfilePage = connect(mapState, mapDispatch)(ProfilePageComponent);
+export default ProfilePage;

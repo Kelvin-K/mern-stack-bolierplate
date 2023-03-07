@@ -2,11 +2,11 @@
 
 ## Development Setup
 
-First of all install docker from https://www.docker.com/products/docker-desktop/ and start mongodb container by running
+First of all install docker from https://www.docker.com/products/docker-desktop/ and start mongodb and redis container by running
 
 ```powershell
 docker compose up -d
-````
+```
 
 then
 
@@ -22,7 +22,7 @@ npm run start:server
 
 # start react client in development mode
 npm run start:client
-````
+```
 
 ## Server Environment
 
@@ -31,6 +31,8 @@ below are the default values for environment variables
 ```dotenv
 PORT=9000
 DATABASE_CONNECTION_STRING=mongodb://127.0.0.1:27017/my_database
+REDIS_URL=redis://localhost:6380
+REDIS_PASSWORD=eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
 ```
 
 you can either create `.env` file or add environment variables in your server

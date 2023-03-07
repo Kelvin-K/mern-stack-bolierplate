@@ -1,15 +1,14 @@
-import { AxiosError } from "axios";
+import axios, { AxiosError } from "axios";
 import HttpStatusCodes from "http-status-codes";
 import React, { useState } from "react";
+import { Helmet } from "react-helmet-async";
 import { useHistory } from "react-router-dom";
 import userRegistrationValidator from "../common/validators/userRegistrationValidator";
-import { APIContext } from "../providers/APIProvider";
-import { NotificationContext } from "../providers/NotificationProvider";
+import { NotificationContext } from "../providers/notification";
 
 export default function SignUpPage() {
 	const history = useHistory();
 	const notifier = React.useContext(NotificationContext);
-	const api = React.useContext(APIContext);
 	const [state, setState] = useState({
 		username: "",
 		password: "",
@@ -37,7 +36,7 @@ export default function SignUpPage() {
 		try {
 			const { error, value: validatedUser } = userRegistrationValidator.validate(state);
 			if (error) return notifier.showNotification(error.message, "error");
-			await api.instance.post("/api/register", validatedUser);
+			await axios.post("/api/register", validatedUser);
 			history.push("/login");
 			return notifier.showNotification("Account created successfully!", "success");
 		}
@@ -63,18 +62,23 @@ export default function SignUpPage() {
 	}
 
 	return (
-		<div className="center_form_container">
-			<form onSubmit={ submitChange }>
-				<h1 className="form_header">Sign Up</h1>
-				{ getFormField("Username", "username", state.username) }
-				{ getFormField("Password", "password", state.password, "password") }
-				{ getFormField("Confirm Password", "confirmPassword", state.confirmPassword, "password") }
-				{ getFormField("First Name", "firstName", state.firstName) }
-				{ getFormField("Last Name", "lastName", state.lastName) }
-				{ getFormField("Email", "email", state.email, "email") }
-				{ getFormField("Contact Number", "contactNumber", state.contactNumber, "tel") }
-				<button type='submit' className='btn btn-primary'>Submit</button>
-			</form>
-		</div>
+		<>
+			<Helmet>
+				<title>Signup | Mern Stack BoilerPlate</title>
+			</Helmet>
+			<div className="fullSizeCenterContainer">
+				<form onSubmit={ submitChange }>
+					<h1 className="form_header">Sign Up</h1>
+					{ getFormField("Username", "username", state.username) }
+					{ getFormField("Password", "password", state.password, "password") }
+					{ getFormField("Confirm Password", "confirmPassword", state.confirmPassword, "password") }
+					{ getFormField("First Name", "firstName", state.firstName) }
+					{ getFormField("Last Name", "lastName", state.lastName) }
+					{ getFormField("Email", "email", state.email, "email") }
+					{ getFormField("Contact Number", "contactNumber", state.contactNumber, "tel") }
+					<button type='submit' className='btn btn-primary'>Submit</button>
+				</form>
+			</div>
+		</>
 	);
 }

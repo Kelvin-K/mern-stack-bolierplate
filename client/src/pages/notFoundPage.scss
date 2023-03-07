@@ -1,0 +1,31 @@
+.NotFoundPage {
+	height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	.content{
+		text-align: center;
+
+		.code {
+			font-size: 70px;
+		}
+
+		.meaning {
+			font-size: 30px;
+		}
+
+		.description {
+			font-size: 18px;
+			margin-bottom: 20px;
+		}
+
+		.goHomeButton {
+			border-radius: 10px;
+			padding: 10px 50px;
+			background-color: dodgerblue;
+			text-decoration: none;
+		}
+	}
+	
+}
