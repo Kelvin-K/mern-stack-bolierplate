@@ -5,10 +5,8 @@ import * as jwt from "jsonwebtoken";
 const accessTokenSecret = '86e9d7ba07f6a646f2dbaa24c655267bc655ece34619dc5b07b7495c706a6c37f1b3935fdf91b64dbbd173ef59cb716690a4cd6225876c0dc2945296ffb2f8fd';
 const refreshTokenSecret = 'c0b38bb3182b438b79a660b39e9eae91f0e6ae548c93c878bbfdcafa04fd786441d6ea23ff3059720d8061df4c379655e9c26db95a43429f60d495a1dc3984ed';
 
-
-export const signToken = (userId: any, secret: string, timeOut: string): Promise<string> =>
+export const signToken = (userId: any, payload = {}, secret: string, timeOut: string): Promise<string> =>
 	new Promise((resolve, reject) => {
-		const payload = {};
 		const options = {
 			expiresIn: timeOut,
 			issuer: "mern-stack-boilerplate",
@@ -22,13 +20,11 @@ export const signToken = (userId: any, secret: string, timeOut: string): Promise
 		});
 	});
 
-export const signAccessToken = (userId: any, secret: string = accessTokenSecret) =>
-	signToken(userId, secret, "15s");
+export const signAccessToken = (userId: any, payload = {}, secret: string = accessTokenSecret) =>
+	signToken(userId, payload, secret, "15s");
 
-export const signRefreshToken = (userId: any, secret: string = refreshTokenSecret) =>
-	signToken(userId, secret, "1y");
-
-
+export const signRefreshToken = (userId: any, payload = {}, secret: string = refreshTokenSecret) =>
+	signToken(userId, payload, secret, "1y");
 
 export const verifyToken = (token: string, secret: string): Promise<any> =>
 	new Promise((resolve, reject) => {

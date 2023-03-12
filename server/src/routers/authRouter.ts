@@ -47,7 +47,7 @@ class AuthRouter {
 			const isMatch = await user.isValidPassword(password);
 			if (!isMatch) throw new createHttpError.Unauthorized("Username and Password combination is invalid.");
 
-			const accessToken = await signAccessToken(user.id);
+			const accessToken = await signAccessToken(user.id, { role: user.role });
 			const refreshToken = await signRefreshToken(user.id);
 			await RedisHelper.client.set(user.id, refreshToken, { EX: 365 * 24 * 60 * 60 });
 
@@ -65,13 +65,15 @@ class AuthRouter {
 
 			const payload = await verifyRefreshToken(refreshToken);
 			const redisRefToken = await RedisHelper.client.get(payload.aud);
-			if (redisRefToken !== refreshToken) {
+			const user = await User.findById(payload.aud);
+
+			if (redisRefToken !== refreshToken || !user) {
 				await RedisHelper.client.del(payload.aud);
 				res.clearCookie("refreshToken");
 				throw new createHttpError.Unauthorized();
 			}
 
-			const accessToken = await signAccessToken(payload.aud);
+			const accessToken = await signAccessToken(payload.aud, { role: user.role });
 			const newRefToken = await signRefreshToken(payload.aud);
 			await RedisHelper.client.set(payload.aud, newRefToken, { EX: 365 * 24 * 60 * 60 });
 

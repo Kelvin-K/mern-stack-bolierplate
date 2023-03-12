@@ -1,5 +1,6 @@
 import bcrypt from "bcrypt";
 import { Document, model, Schema } from "mongoose";
+import Roles from "../common/models/roles";
 
 const SALT_WORK_FACTOR = 10;
 
@@ -10,6 +11,7 @@ interface IUser {
 	lastName: string;
 	email: string;
 	contactNumber: string;
+	role: Roles;
 }
 
 export interface IUserDocument extends IUser, Document {
@@ -47,6 +49,11 @@ var userSchema = new Schema<IUserDocument>({
 	},
 	contactNumber: {
 		type: String
+	},
+	role: {
+		type: Number,
+		required: true,
+		default: Roles.General,
 	}
 });
 

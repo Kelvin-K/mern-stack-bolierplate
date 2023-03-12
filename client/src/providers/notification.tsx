@@ -39,7 +39,7 @@ export default function Notification(props: DefaultProps) {
 						notifications.map(notification => (
 							<div key={ notification.id } className={ "notification " + notification.type } style={ { animationDuration: notification.duration / 1000 + "s" } }>
 								<div className="message">{ notification.message }</div>
-								<img src={ notification.type === "warning" ? BlackCloseIcon : WhiteCloseIcon } alt="close" className="close_notification" onClick={ closeNotification } />
+								<img src={ notification.type === "warning" ? BlackCloseIcon : WhiteCloseIcon } alt="close" className="close_notification" onClick={ () => closeNotification(notification) } />
 							</div>
 						))
 					}
