@@ -14,7 +14,11 @@ export default function NotFoundPage() {
 					<div className="code">404</div>
 					<div className="meaning">Not Found</div>
 					<div className="description">The resource requested could not be found on this server!</div>
-					<Link to="/" className="btn btn-primary goHomeButton">GO HOME</Link>
+					<Link to="/">
+						<button className="btn btn-primary goHomeButton">
+							GO HOME
+						</button>
+					</Link>
 				</div>
 			</div>
 		</>
