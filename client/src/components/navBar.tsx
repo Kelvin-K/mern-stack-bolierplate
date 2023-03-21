@@ -45,7 +45,7 @@ function NavBarComponent(props: ReturnType<typeof mapState> & ReturnType<typeof 
 				<input type="radio" name="slider" id="menu-btn" />
 				<input type="radio" name="slider" id="close-btn" />
 				<ul className="nav-links">
-					<label htmlFor="close-btn" className="btn close-btn"><i className="fas fa-times"></i></label>
+					<label htmlFor="close-btn" className="btn close-btn"><i className="fas fa-times" /></label>
 					<li><Link to="/">Home</Link></li>
 					<li><Link to="/about">About</Link></li>
 					<li>
@@ -98,7 +98,6 @@ function NavBarComponent(props: ReturnType<typeof mapState> & ReturnType<typeof 
 							</div>
 						</div>
 					</li>
-					<li><Link to="#">Feedback</Link></li>
 					{
 						props.isAuthenticated ?
 							<>
