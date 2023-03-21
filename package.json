@@ -7,7 +7,7 @@
 		"install": "npm-run-all install:*",
 		"install:server": "cd ./server && npm install",
 		"install:client": "cd ./client && npm install",
-		"build": "del build && npm-run-all build:windows:*",
+		"build": "del build -Recurse && npm-run-all build:windows:*",
 		"build:windows:server": "cd ./server && npm run build:windows",
 		"build:windows:client": "cd ./client && npm run build:windows",
 		"build:linux": "npm-run-all build:linux:*",
